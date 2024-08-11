@@ -9,3 +9,9 @@ resource "aws_organizations_organization" "main" {
 
   feature_set = "ALL"
 }
+
+resource "aws_organizations_organizational_unit" "main" {
+  for_each  = var.org_units
+  name      = each.value
+  parent_id = aws_organizations_organization.main.roots[0].id
+}
