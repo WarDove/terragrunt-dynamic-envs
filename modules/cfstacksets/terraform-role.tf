@@ -1,6 +1,6 @@
 resource "aws_cloudformation_stack_set" "terraform_role" {
-  permission_model        = "SERVICE_MANAGED"
-  name                    = "terraform-execution-role"
+  permission_model = "SERVICE_MANAGED"
+  name             = "terraform-execution-role"
 
   auto_deployment {
     enabled = true
@@ -8,10 +8,9 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
 
   capabilities = ["CAPABILITY_NAMED_IAM"]
 
-
   template_body = jsonencode({
     AWSTemplateFormatVersion = "2010-09-09",
-    Description              = "AWS CloudFormation Template to create an IAM Role named 'terraform-execution-role' and attach the 'AdministratorAccess' AWS managed policy. The role can be assumed by an external account with the same role name.",
+    Description              = "AWS CloudFormation Template to create an IAM Role named 'terraform-execution-role' and attach the 'AdministratorAccess' AWS managed policy. The role can be assumed by an external account with a matching condition.",
     Resources = {
       OrgRole = {
         Type = "AWS::IAM::Role",
@@ -23,9 +22,14 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
               {
                 Effect = "Allow",
                 Principal = {
-                  AWS = ["arn:aws:iam::${var.shared_services_account_id}:role/terraform-execution-role"]
+                  AWS = "*"
                 },
-                Action = ["sts:AssumeRole"]
+                Action = ["sts:AssumeRole"],
+                Condition = {
+                  StringLike = {
+                    "aws:PrincipalArn" : "arn:aws:iam::${var.shared_services_account_id}:role/terraform-execution-role"
+                  }
+                }
               }
             ]
           },
@@ -36,4 +40,11 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
       }
     }
   })
+}
+
+resource "aws_cloudformation_stack_set_instance" "terraform_role" {
+  stack_set_name = aws_cloudformation_stack_set.terraform_role.name
+  deployment_targets {
+    organizational_unit_ids = [var.org_ou_ids["sdlc"]]
+  }
 }
