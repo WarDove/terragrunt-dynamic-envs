@@ -22,7 +22,7 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
               {
                 Effect = "Allow",
                 Principal = {
-                  AWS = "*"
+                  AWS = ["*"]
                 },
                 Action = ["sts:AssumeRole"],
                 Condition = {
