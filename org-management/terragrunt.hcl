@@ -11,7 +11,7 @@ locals {
 inputs = merge(
   local.common_vars.inputs,
   {
-    region = local.region
+    region     = local.region
     account_id = local.common_vars.inputs.org_account_ids[local.aws_env]
   }
 )

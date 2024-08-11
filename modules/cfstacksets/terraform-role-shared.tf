@@ -1,6 +1,6 @@
-resource "aws_cloudformation_stack_set" "terraform_role" {
+resource "aws_cloudformation_stack_set" "terraform_role_shared" {
   permission_model = "SERVICE_MANAGED"
-  name             = "terraform-execution-role"
+  name             = "terraform-execution-role-shared"
 
   auto_deployment {
     enabled = true
@@ -24,12 +24,7 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
                 Principal = {
                   AWS = ["arn:aws:iam::${var.shared_services_id}:root"]
                 },
-                Action = ["sts:AssumeRole"],
-                Condition = {
-                  StringLike = {
-                    "aws:PrincipalArn" : "arn:aws:iam::${var.shared_services_id}:role/terraform-execution-role"
-                  }
-                }
+                Action = ["sts:AssumeRole"]
               }
             ]
           },
@@ -42,9 +37,11 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
   })
 }
 
-resource "aws_cloudformation_stack_set_instance" "terraform_role" {
-  stack_set_name = aws_cloudformation_stack_set.terraform_role.name
+resource "aws_cloudformation_stack_set_instance" "terraform_role_shared" {
+  stack_set_name = aws_cloudformation_stack_set.terraform_role_shared.name
   deployment_targets {
-    organizational_unit_ids = [var.org_ou_ids["sdlc"]]
+    organizational_unit_ids = [var.org_ou_ids["core"]]
+    account_filter_type     = "DIFFERENCE"
+    accounts                = [var.root_account_id]
   }
 }

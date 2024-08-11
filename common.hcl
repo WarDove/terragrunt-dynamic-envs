@@ -4,7 +4,7 @@ locals {
     production  = "253490758009"
   }
 
-  main_account_ids = {
+  core_account_ids = {
     root            = "166733594871"
     shared-services = "011528295601"
   }
@@ -19,11 +19,12 @@ inputs = {
 
   company_prefix     = "mycompany"
   sdlc_account_ids   = local.sdlc_account_ids
-  main_account_ids   = local.main_account_ids
-  org_account_ids    = merge(local.sdlc_account_ids, local.main_account_ids)
-  shared_services_id = local.main_account_ids["shared-services"]
+  core_account_ids   = local.core_account_ids
+  org_account_ids    = merge(local.sdlc_account_ids, local.core_account_ids)
+  shared_services_id = local.core_account_ids["shared-services"]
+  root_account_id    = local.core_account_ids["root"]
   account_role_name  = "terraform-execution-role"
-  org_units          = ["SDLC"]
+  org_units          = ["SDLC", "Core"]
 }
 
 
