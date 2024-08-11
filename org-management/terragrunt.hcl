@@ -11,7 +11,8 @@ locals {
 inputs = merge(
   local.common_vars.inputs,
   {
-    # additional inputs
+    region = local.region
+    account_id = local.common_vars.inputs.org_account_ids[local.aws_env]
   }
 )
 
@@ -39,10 +40,10 @@ generate "provider" {
     provider "aws" {
       region = "${local.region}"
       profile = "${local.profile}"
-      allowed_account_ids =["${local.common_vars.inputs.org_account_ids["${local.aws_env}"]}"]
+      allowed_account_ids =["${local.common_vars.inputs.org_account_ids[local.aws_env]}"]
 
       assume_role {
-        role_arn = "arn:aws:iam::${local.common_vars.inputs.org_account_ids["${local.aws_env}"]}:role/${local.common_vars.inputs.account_role_name}"
+        role_arn = "arn:aws:iam::${local.common_vars.inputs.org_account_ids[local.aws_env]}:role/${local.common_vars.inputs.account_role_name}"
       }
 
       default_tags {

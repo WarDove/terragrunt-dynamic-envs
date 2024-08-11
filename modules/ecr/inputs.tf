@@ -2,13 +2,15 @@ variable "ecr_image_count" {
   default = 50
 }
 
-variable "sdlc_account_ids" {}
-
-variable "ecr_remote_access_roles" {}
-
-variable "deployments" {}
+variable "account_id" {}
+variable "region" {}
 variable "company_prefix" {}
 
-variable "env" {
-  default = "shared"
+variable "sdlc_account_ids" {
+  type = map(string)
 }
+
+variable "deployments" {
+  type = list(string)
+}
+

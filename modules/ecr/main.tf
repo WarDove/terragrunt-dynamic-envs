@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "main" {
 
     principals {
       type        = "AWS"
-      identifiers = var.ecr_remote_access_roles
+      identifiers = local.remote_access_roles
     }
 
     actions = [

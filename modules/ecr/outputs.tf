@@ -1,7 +1,7 @@
 output "account_id" {
-  value = data.aws_caller_identity.current.id
+  value = var.account_id
 }
 
 output "ecr_registry" {
-  value = "${local.account_id}.dkr.ecr.${local.region}.amazonaws.com"
+  value = "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com"
 }
