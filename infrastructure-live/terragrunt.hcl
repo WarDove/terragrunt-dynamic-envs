@@ -1,20 +1,19 @@
 skip = true
 
 locals {
-  account_role_name = "terraform-execution-role"
-  aws_env           = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
-  company_prefix    = "mycompany"
-  env_regex         = "infrastructure-live/([a-zA-Z0-9-]+)/"
-  profile           = "${local.company_prefix}-shared-services-sso"
-  region            = "us-east-2"
-
-  account_mapping = {
-    root            = "166733594871"
-    development     = "011528295573"
-    production      = "253490758009"
-    shared-services = "011528295601"
-  }
+  common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
+  aws_env     = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
+  env_regex   = "infrastructure-live/([a-zA-Z0-9-]+)/"
+  profile     = "${local.common_vars.inputs.company_prefix}-shared-services-sso"
+  region      = "us-east-2"
 }
+
+inputs = merge(
+  local.common_vars.inputs,
+  {
+    # additional inputs
+  }
+)
 
 remote_state {
   backend = "s3"
@@ -24,8 +23,8 @@ remote_state {
   }
 
   config = {
-    bucket         = "${local.company_prefix}-terraform-state-shared-services"
-    key            = "${local.company_prefix}/${get_path_from_repo_root()}/terraform.tfstate"
+    bucket         = "${local.common_vars.inputs.company_prefix}-terraform-state-shared-services"
+    key            = "${local.common_vars.inputs.company_prefix}/${get_path_from_repo_root()}/terraform.tfstate"
     region         = local.region
     profile        = local.profile
     encrypt        = true
@@ -41,11 +40,11 @@ generate "provider" {
       region = "${local.region}"
       profile = "${local.profile}"
       allowed_account_ids = [
-        "${local.account_mapping[local.aws_env]}"
+        "${local.common_vars.inputs.org_account_ids[local.aws_env]}"
       ]
 
       assume_role {
-        role_arn = "arn:aws:iam::${local.account_mapping[local.aws_env]}:role/${local.account_role_name}"
+        role_arn = "arn:aws:iam::${local.common_vars.inputs.org_account_ids[local.aws_env]}:role/${local.common_vars.inputs.account_role_name}"
       }
 
       default_tags {
@@ -54,7 +53,7 @@ generate "provider" {
           ManagedBy   = "terraform"
           DeployedBy  = "terragrunt"
           Creator     = "${get_env("USER", "NOT_SET")}"
-          Company     = "${local.company_prefix}"
+          Company     = "${local.common_vars.inputs.company_prefix}"
         }
       }
     }
