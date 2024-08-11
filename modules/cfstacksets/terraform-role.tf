@@ -22,7 +22,7 @@ resource "aws_cloudformation_stack_set" "terraform_role" {
               {
                 Effect = "Allow",
                 Principal = {
-                  AWS = ["arn:aws:iam::011528295601:root"]
+                  AWS = ["arn:aws:iam::${var.shared_services_account_id}:root"]
                 },
                 Action = ["sts:AssumeRole"],
                 Condition = {

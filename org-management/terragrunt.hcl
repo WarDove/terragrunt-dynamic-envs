@@ -8,10 +8,10 @@ locals {
   region            = "eu-central-1"
 
   account_mapping = {
-    root            = 166733594871
-    development     = 222222222222
-    production      = 000000000000
-    shared-services = 011528295601
+    root            = "166733594871"
+    development     = "222222222222"
+    production      = "000000000000"
+    shared-services = "011528295601"
   }
 }
 
