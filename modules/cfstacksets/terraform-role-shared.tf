@@ -35,6 +35,10 @@ resource "aws_cloudformation_stack_set" "terraform_role_shared" {
       }
     }
   })
+
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
 }
 
 resource "aws_cloudformation_stack_set_instance" "terraform_role_shared" {
