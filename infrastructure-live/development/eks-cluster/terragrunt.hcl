@@ -57,4 +57,12 @@ inputs = {
       most_recent = true
     }
   }
+
+  fargate_profiles = {
+    kube-system = {
+      selectors = [
+        { namespace = "kube-system" }
+      ]
+    }
+  }
 }
