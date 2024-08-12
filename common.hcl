@@ -22,7 +22,6 @@ inputs = {
   core_account_ids   = local.core_account_ids
   org_account_ids    = merge(local.sdlc_account_ids, local.core_account_ids)
   shared_services_id = local.core_account_ids["shared-services"]
-  root_account_id    = local.core_account_ids["root"]
   account_role_name  = "terraform-execution-role"
   org_units          = ["SDLC", "Core"]
 }
