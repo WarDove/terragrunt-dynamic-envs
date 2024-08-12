@@ -1,4 +1,6 @@
 skip = true
+terragrunt_version_constraint = ">= 0.66"
+terraform_version_constraint = ">= 1.9.0"
 
 locals {
   common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
@@ -38,6 +40,15 @@ generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<-EOF
+    terraform {
+      required_providers {
+        aws = {
+          source = "hashicorp/aws"
+          version = "~> 5.60"
+        }
+      }
+    }
+
     provider "aws" {
       region = "${local.region}"
       profile = "${local.profile}"
