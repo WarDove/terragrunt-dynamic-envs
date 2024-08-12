@@ -15,8 +15,18 @@ terraform {
 }
 
 inputs = {
-  cluster_version = "1.30"
-  subnet_ids      = dependency.eks-network.outputs.subnets["private"][*].id
+  cluster_version                          = "1.30"
+  subnet_ids                               = dependency.eks-network.outputs.subnets["private"][*].id
+  enable_cluster_creator_admin_permissions = true
+
+ /* access_entries = {
+    test = {
+      kubernertes_groups = ["system:masters"]
+      type               = "STANDARD"
+      principal_arn = ""
+      user_name = null
+    }
+  } */
 
   cluster_addons = {
     coredns = {
