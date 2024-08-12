@@ -41,9 +41,7 @@ generate "provider" {
     provider "aws" {
       region = "${local.region}"
       profile = "${local.profile}"
-      allowed_account_ids = [
-        "${local.common_vars.inputs.org_account_ids[local.aws_env]}"
-      ]
+      allowed_account_ids = ["${local.common_vars.inputs.org_account_ids[local.aws_env]}"]
 
       assume_role {
         role_arn = "arn:aws:iam::${local.common_vars.inputs.org_account_ids[local.aws_env]}:role/${local.common_vars.inputs.account_role_name}"
