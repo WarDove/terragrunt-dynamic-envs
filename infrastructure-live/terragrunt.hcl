@@ -4,13 +4,14 @@ locals {
   common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
   aws_env     = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
   env_regex   = "infrastructure-live/([a-zA-Z0-9-]+)/"
-  profile     = "${local.common_vars.inputs.company_prefix}-shared-services-sso"
+  profile     = "${local.common_vars.inputs.company_prefix}-shared-services-tf"
   region      = "us-east-2"
 }
 
 inputs = merge(
   local.common_vars.inputs,
   {
+    env        = local.aws_env
     region     = local.region
     account_id = local.common_vars.inputs.org_account_ids[local.aws_env]
   }
