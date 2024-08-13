@@ -20,7 +20,8 @@ module "vpc" {
   create_database_subnet_group = true
   create_vpc                   = true
   enable_nat_gateway           = true
-  single_nat_gateway           = var.env != "prod" ? true : false
+  enable_flow_log              = true
+  single_nat_gateway           = var.env != "production" ? true : false
 
   public_subnet_tags = {
     "kubernetes.io/role/elb"                    = 1
