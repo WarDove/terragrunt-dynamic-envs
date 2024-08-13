@@ -19,7 +19,7 @@ inputs = {
   subnet_ids                               = dependency.eks-network.outputs.subnets["private"][*].id
   enable_cluster_creator_admin_permissions = true
 
- /* access_entries = {
+  /* access_entries = {
     test = {
       kubernertes_groups = ["system:masters"]
       type               = "STANDARD"
