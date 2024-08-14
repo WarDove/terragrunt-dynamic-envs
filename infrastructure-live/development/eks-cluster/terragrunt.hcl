@@ -11,7 +11,8 @@ terraform {
 }
 
 inputs = {
-  cluster_version = "1.30"
-  subnet_ids      = dependency.eks-vpc.outputs.private_subnets
-  vpc_id          = dependency.eks-vpc.outputs.vpc_id
+  cluster_version  = "1.30"
+  enable_karpenter = true
+  subnet_ids       = dependency.eks-vpc.outputs.private_subnets
+  vpc_id           = dependency.eks-vpc.outputs.vpc_id
 }

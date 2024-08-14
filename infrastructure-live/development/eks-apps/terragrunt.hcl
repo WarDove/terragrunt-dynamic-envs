@@ -11,6 +11,11 @@ terraform {
 }
 
 inputs = {
+  karpenter_version                  = "0.37.0"
+  enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
+  node_iam_role_arn                  = dependency.eks-cluster.outputs.node_iam_role_arn
+  karpenter_role_arn                 = dependency.eks-cluster.outputs.karpenter_role_arn
+  karpenter_termination_queue_name   = dependency.eks-cluster.outputs.karpenter_termination_queue_name
   cluster_endpoint                   = dependency.eks-cluster.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data
 }

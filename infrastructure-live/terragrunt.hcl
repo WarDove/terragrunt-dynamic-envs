@@ -7,10 +7,12 @@ locals {
   company_prefix     = local.common_vars.inputs.company_prefix
   env                = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
   env_regex          = "infrastructure-live/([a-zA-Z0-9-]+)/"
+  az_count           = local.env == "production" ? 3 : 2
   cluster_name       = "${local.company_prefix}-${local.env}"
   profile            = "${local.company_prefix}-shared-services-tf"
   kubeconfig_profile = "${local.company_prefix}-${local.env}-tf"
   region             = "us-east-2"
+
 }
 
 inputs = merge(
@@ -21,6 +23,7 @@ inputs = merge(
     account_id         = local.common_vars.inputs.org_account_ids[local.env]
     cluster_name       = local.cluster_name
     kubeconfig_profile = local.kubeconfig_profile
+    az_count           = local.az_count
   }
 )
 

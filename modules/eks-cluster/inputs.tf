@@ -13,3 +13,12 @@ variable "subnet_ids" {
 variable "vpc_id" {
   type = string
 }
+
+variable "env" {
+  type = string
+}
+
+variable "enable_karpenter" {
+  type    = bool
+  default = false
+}

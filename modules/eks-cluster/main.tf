@@ -14,7 +14,8 @@ module "eks" {
     coredns = {
       most_recent = true
       configuration_values = jsonencode({
-        computeType = "fargate"
+        computeType  = "fargate"
+        replicaCount = var.env == "production" ? 2 : 1
       })
     },
     kube-proxy = {
@@ -38,7 +39,8 @@ module "eks" {
       })
     }
     aws-ebs-csi-driver = {
-      most_recent = true
+      most_recent  = true
+      replicaCount = var.env == "production" ? 2 : 1
     }
   }
 
@@ -57,6 +59,7 @@ module "eks" {
 }
 
 module "karpenter" {
+  count   = var.enable_karpenter ? 1 : 0
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 20.23.0"
 

@@ -7,6 +7,5 @@ terraform {
 }
 
 inputs = {
-  az_count     = 2
   eks_vpc_cidr = "10.2.0.0/16"
 }
