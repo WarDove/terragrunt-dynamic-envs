@@ -7,6 +7,14 @@ locals {
   database_subnets = slice([for i in range(1, 16, 2) : cidrsubnet(var.eks_vpc_cidr, 8, i)], var.az_count, 2 * var.az_count)
 }
 
+module "s3_bucket_flow_logs" {
+  source                   = "terraform-aws-modules/s3-bucket/aws"
+  bucket                   = "${var.cluster_name}-flow-logs"
+  acl                      = "private"
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.12.1"
@@ -21,6 +29,8 @@ module "vpc" {
   create_vpc                   = true
   enable_nat_gateway           = true
   enable_flow_log              = true
+  flow_log_destination_type    = "s3"
+  flow_log_destination_arn     = module.s3_bucket_flow_logs.s3_bucket_arn
   single_nat_gateway           = var.env != "production" ? true : false
 
   public_subnet_tags = {
