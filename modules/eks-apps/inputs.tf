@@ -13,3 +13,17 @@ variable "cluster_certificate_authority_data" {
 variable "kubeconfig_profile" {
   type = string
 }
+
+################################################################################
+# Karpenter
+################################################################################
+
+variable "create_karpenter" {
+  type    = bool
+  default = false
+}
+
+variable "karpenter_version" {
+  type    = string
+  default = "0.37.0"
+}

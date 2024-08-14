@@ -16,10 +16,10 @@ module "eks" {
       configuration_values = jsonencode({
         computeType = "fargate"
       })
-    }
+    },
     kube-proxy = {
       most_recent = true
-    }
+    },
     vpc-cni = {
       most_recent    = true
       before_compute = true
@@ -46,6 +46,11 @@ module "eks" {
     kube-system = {
       selectors = [
         { namespace = "kube-system" }
+      ]
+    },
+    karpenter = {
+      selectors = [
+        { namespace = "karpenter" }
       ]
     }
   }
