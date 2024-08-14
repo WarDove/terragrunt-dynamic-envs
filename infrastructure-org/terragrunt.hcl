@@ -2,7 +2,7 @@ skip = true
 
 locals {
   common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
-  env     = "root"
+  env         = "root"
   env_regex   = "infrastructure-live/([a-zA-Z0-9-]+)/"
   profile     = "${local.common_vars.inputs.company_prefix}-root-sso"
   region      = "eu-central-1"
