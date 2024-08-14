@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.23.0"
 
-  cluster_version                          = "1.30"
+  cluster_version                          = var.cluster_version
   subnet_ids                               = var.subnet_ids
   enable_cluster_creator_admin_permissions = true
 
@@ -61,5 +61,20 @@ module "eks" {
         { namespace = "kube-system" }
       ]
     }
+  }
+}
+
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "~> 20.23.0"
+
+  cluster_name            = module.eks.cluster_name
+  irsa_oidc_provider_arn  = module.eks.oidc_provider_arn
+  create_access_entry     = true
+  create_instance_profile = true
+  enable_irsa             = true
+
+  node_iam_role_additional_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 }
