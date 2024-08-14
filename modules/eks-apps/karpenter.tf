@@ -106,7 +106,7 @@ resource "kubernetes_manifest" "karpenter_ec2nodeclass" {
       name = "default"
     }
     spec = {
-      instanceProfile = var.node_iam_role_arn
+      instanceProfile = var.node_instance_profile_name
       amiFamily       = "Bottlerocket"
       subnetSelectorTerms = [
         {

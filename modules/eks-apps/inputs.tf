@@ -43,6 +43,6 @@ variable "karpenter_termination_queue_name" {
   type = string
 }
 
-variable "node_iam_role_arn" {
+variable "node_instance_profile_name" {
   type = string
 }
