@@ -39,8 +39,12 @@ module "eks" {
       })
     }
     aws-ebs-csi-driver = {
-      most_recent  = true
-      replicaCount = var.env == "production" ? 2 : 1
+      most_recent = true
+      configuration_values = jsonencode({
+        controller = {
+          replicaCount = var.env == "production" ? 2 : 1
+        }
+      })
     }
   }
 
