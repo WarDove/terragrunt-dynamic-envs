@@ -6,15 +6,18 @@ module "eks" {
   cluster_version                          = var.cluster_version
   subnet_ids                               = var.subnet_ids
   enable_cluster_creator_admin_permissions = true
+  cluster_endpoint_public_access           = true
+  cluster_endpoint_public_access_cidrs     = ["0.0.0.0/0"]
+
 
   /* access_entries = {
-      test = {
-        kubernertes_groups = ["system:masters"]
-        type               = "STANDARD"
-        principal_arn = ""
-        user_name = null
-      }
-    } */
+    test = {
+      kubernertes_groups = ["system:masters"]
+      type               = "STANDARD"
+      principal_arn = ""
+      user_name = null
+    }
+  } */
 
   cluster_addons = {
     coredns = {
