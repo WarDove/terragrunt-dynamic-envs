@@ -11,3 +11,13 @@ resource "kubernetes_namespace" "example" {
     name = "terraform-example-namespace"
   }
 }
+
+resource "helm_release" "karpenter_crd" {
+  namespace        = "karpenter"
+  create_namespace = true
+  name             = "karpenter-crd"
+  repository       = "oci://public.ecr.aws/karpenter"
+  chart            = "karpenter-crd"
+  #version          = var.karpenter_helm_version
+  wait             = true
+}
