@@ -14,6 +14,7 @@ module "s3_bucket_flow_logs" {
   bucket                   = "${var.cluster_name}-flow-logs"
   acl                      = "private"
   control_object_ownership = true
+  force_destroy            = true
   object_ownership         = "ObjectWriter"
 }
 
