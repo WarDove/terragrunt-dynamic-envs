@@ -13,5 +13,5 @@ terraform {
 inputs = {
   cluster_version = "1.30"
   subnet_ids      = dependency.eks-vpc.outputs.private_subnets
-  cw_logs_enabled = false
+  vpc_id          = dependency.eks-vpc.outputs.vpc_id
 }

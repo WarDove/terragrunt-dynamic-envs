@@ -5,19 +5,10 @@ module "eks" {
   cluster_name                             = var.cluster_name
   cluster_version                          = var.cluster_version
   subnet_ids                               = var.subnet_ids
+  vpc_id                                   = var.vpc_id
   enable_cluster_creator_admin_permissions = true
   cluster_endpoint_public_access           = true
   cluster_endpoint_public_access_cidrs     = ["0.0.0.0/0"]
-
-
-  /* access_entries = {
-    test = {
-      kubernertes_groups = ["system:masters"]
-      type               = "STANDARD"
-      principal_arn = ""
-      user_name = null
-    }
-  } */
 
   cluster_addons = {
     coredns = {
@@ -43,14 +34,6 @@ module "eks" {
           env = {
             DISABLE_TCP_EARLY_DEMUX = "true"
           }
-        }
-      })
-    }
-    amazon-cloudwatch-observability = {
-      most_recent = true
-      configuration_values = jsonencode({
-        containerLogs = {
-          enabled = var.cw_logs_enabled
         }
       })
     }

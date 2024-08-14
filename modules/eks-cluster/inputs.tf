@@ -1,8 +1,3 @@
-variable "cw_logs_enabled" {
-  type    = bool
-  default = false
-}
-
 variable "cluster_version" {
   type = string
 }
@@ -13,4 +8,8 @@ variable "cluster_name" {
 
 variable "subnet_ids" {
   type = list(string)
+}
+
+variable "vpc_id" {
+  type = string
 }
