@@ -7,10 +7,11 @@ dependency "eks-vpc" {
 }
 
 terraform {
-  source = "${get_repo_root()}/modules/eks-vpc"
+  source = "${get_repo_root()}/modules/eks-cluster"
 }
 
 inputs = {
-  cw_logs_enabled = false
+  cluster_version = "1.30"
   subnet_ids      = dependency.eks-vpc.outputs.private_subnets
+  cw_logs_enabled = false
 }
