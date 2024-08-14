@@ -1,16 +1,15 @@
-variable "cw_logs_enabled" {
-  type    = bool
-  default = false
-}
-
-variable "cluster_version" {
-  type = string
-}
-
 variable "cluster_name" {
   type = string
 }
 
-variable "subnet_ids" {
-  type = list(string)
+variable "cluster_endpoint" {
+  type = string
+}
+
+variable "cluster_certificate_authority_data" {
+  type = string
+}
+
+variable "kubeconfig_profile" {
+  type = string
 }
