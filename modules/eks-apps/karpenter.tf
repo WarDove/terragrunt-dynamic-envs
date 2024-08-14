@@ -49,7 +49,6 @@ resource "helm_release" "karpenter" {
   }
 }
 
-
 resource "kubernetes_manifest" "karpenter_nodepool" {
   count    = var.enable_karpenter ? 1 : 0
   provider = kubernetes
