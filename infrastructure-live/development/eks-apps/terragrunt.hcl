@@ -10,11 +10,7 @@ terraform {
   source = "${get_repo_root()}/modules/eks-apps"
 }
 
-inputs = {
-  cluster_version = "1.30"
-  subnet_ids      = dependency.eks-vpc.outputs.private_subnets
-  cw_logs_enabled = false
-}
+inputs = {}
 
 generate "provider_kubernetes" {
   path      = "provider-kubernetes.tf"
