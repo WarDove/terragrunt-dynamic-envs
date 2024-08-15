@@ -58,6 +58,11 @@ module "eks" {
       selectors = [
         { namespace = "karpenter" }
       ]
+    },
+    external-secrets = {
+      selectors = [
+        { namespace = "external-secrets" }
+      ]
     }
   }
 }

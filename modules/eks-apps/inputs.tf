@@ -66,3 +66,15 @@ variable "albc_version" {
 variable "eks_vpc_id" {
   type = string
 }
+
+################################################################################
+# External Secrets Operator
+################################################################################
+
+variable "enable_es" {
+  type = bool
+}
+
+variable "es_version" {
+  type = string
+}
