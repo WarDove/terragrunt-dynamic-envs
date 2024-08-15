@@ -1,5 +1,6 @@
 locals { # TODO: THESE RULES HAVE TO BE REVISED
-  remote_node_roles = [for env, account_id in var.sdlc_account_ids : "arn:aws:iam::${account_id}:role/${var.node_role_name}"]
+  remote_node_roles          = [for env, account_id in var.sdlc_account_ids : "arn:aws:iam::${account_id}:role/${var.node_role_name}"]
+  remote_node_roles_dev_only = ["arn:aws:iam::${var.sdlc_account_ids["development"]}:role/${var.node_role_name}"]
 
   rules = [
     {

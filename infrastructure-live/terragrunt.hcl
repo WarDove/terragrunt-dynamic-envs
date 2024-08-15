@@ -2,6 +2,10 @@ skip                          = true
 terragrunt_version_constraint = ">= 0.66"
 terraform_version_constraint  = ">= 1.9.0"
 
+dependencies {
+  paths = ["${get_repo_root()}/infrastructure-org/root/cfstacksets"]
+}
+
 terraform {
   source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
 }
@@ -23,6 +27,7 @@ inputs = merge(
   local.common_vars.inputs,
   {
     env                = local.env
+    dev_only           = true
     region             = local.region
     account_id         = local.common_vars.inputs.org_account_ids[local.env]
     cluster_name       = local.cluster_name

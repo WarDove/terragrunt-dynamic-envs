@@ -27,3 +27,6 @@ variable "node_role_name" {
   type = string
 }
 
+variable "dev_only" {
+  type = bool
+}
