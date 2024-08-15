@@ -23,3 +23,7 @@ variable "deployments" {
   type = list(string)
 }
 
+variable "dev_node_iam_role_arn" {
+  type = string
+}
+
