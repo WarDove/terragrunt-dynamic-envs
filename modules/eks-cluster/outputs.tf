@@ -6,6 +6,10 @@ output "cluster_certificate_authority_data" {
   value = module.eks.cluster_certificate_authority_data
 }
 
+output "eks_vpc_id" {
+  value = var.vpc_id
+}
+
 ################################################################################
 # Fargate
 ################################################################################
@@ -19,6 +23,10 @@ output "fargate_iam_role_arns" {
 ################################################################################
 
 output "enable_karpenter" {
+  value = var.enable_karpenter
+}
+
+output "enable_albc" {
   value = var.enable_karpenter
 }
 

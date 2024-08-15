@@ -7,7 +7,10 @@ dependency "eks-cluster" {
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
   mock_outputs = {
     enable_karpenter                   = false
+    enable_albc                        = false
+    eks_vpc_id                         = "fake-vpc-id"
     karpenter_role_arn                 = "fake-role-arn"
+    oidc_provider_arn                  = "fake-oidc-provider-arn"
     karpenter_termination_queue_name   = "fake-queue-name"
     cluster_endpoint                   = "https://fake.cluster.endpoint"
     cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBN1FJREFRQUJNQTBHQ1NxR1NJYjMKRFFFQkN3VUFBNElCQVFBeEFsWUNMeFk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
@@ -16,7 +19,10 @@ dependency "eks-cluster" {
 
 inputs = {
   karpenter_version                  = "0.37.0"
+  albc_version                       = "1.8.2"
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
+  enable_albc                        = dependency.eks-cluster.outputs.enable_albc
+  eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
   karpenter_role_arn                 = dependency.eks-cluster.outputs.karpenter_role_arn
   karpenter_termination_queue_name   = dependency.eks-cluster.outputs.karpenter_termination_queue_name

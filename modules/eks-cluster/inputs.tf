@@ -23,6 +23,15 @@ variable "enable_karpenter" {
   default = false
 }
 
+variable "enable_albc" {
+  type    = bool
+  default = false
+}
+
 variable "node_role_name" {
+  type = string
+}
+
+variable "albc_role_name" {
   type = string
 }

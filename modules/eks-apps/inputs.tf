@@ -22,6 +22,10 @@ variable "az_count" {
   type = number
 }
 
+variable "region" {
+  type = string
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
@@ -44,5 +48,21 @@ variable "karpenter_termination_queue_name" {
 }
 
 variable "node_instance_profile_name" {
+  type = string
+}
+
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
+
+variable "enable_albc" {
+  type = bool
+}
+
+variable "albc_version" {
+  type = string
+}
+
+variable "eks_vpc_id" {
   type = string
 }
