@@ -2,6 +2,10 @@ skip                          = true
 terragrunt_version_constraint = ">= 0.66"
 terraform_version_constraint  = ">= 1.9.0"
 
+terraform {
+  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
+}
+
 locals {
   common_vars        = read_terragrunt_config(find_in_parent_folders("common.hcl"))
   company_prefix     = local.common_vars.inputs.company_prefix

@@ -6,10 +6,6 @@ dependency "eks-cluster" {
   config_path = "../eks-cluster"
 }
 
-terraform {
-  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
-}
-
 inputs = {
   karpenter_version                  = "0.37.0"
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter

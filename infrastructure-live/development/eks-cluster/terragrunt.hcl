@@ -6,10 +6,6 @@ dependency "eks-vpc" {
   config_path = "../eks-vpc"
 }
 
-terraform {
-  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
-}
-
 inputs = {
   cluster_version  = "1.30"
   enable_karpenter = true

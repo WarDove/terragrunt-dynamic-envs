@@ -1,5 +1,9 @@
 skip = true
 
+terraform {
+  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
+}
+
 locals {
   common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
   env         = "root"
