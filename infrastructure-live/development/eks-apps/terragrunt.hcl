@@ -3,7 +3,16 @@ include "root" {
 }
 
 dependency "eks-cluster" {
-  config_path = "../eks-cluster"
+  config_path                             = "../eks-cluster"
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs = {
+    enable_karpenter                   = false
+    node_instance_profile_name         = "fake-instance-profile"
+    karpenter_role_arn                 = "fake-role-arn"
+    karpenter_termination_queue_name   = "fake-queue-name"
+    cluster_endpoint                   = "https://fake.cluster.endpoint"
+    cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBN1FJREFRQUJNQTBHQ1NxR1NJYjMKRFFFQkN3VUFBNElCQVFBeEFsWUNMeFk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+  }
 }
 
 inputs = {

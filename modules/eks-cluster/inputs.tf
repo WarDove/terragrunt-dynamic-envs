@@ -22,3 +22,7 @@ variable "enable_karpenter" {
   type    = bool
   default = false
 }
+
+variable "node_role_name" {
+  type = string
+}

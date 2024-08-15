@@ -20,10 +20,10 @@ variable "sdlc_account_ids" {
 }
 
 variable "deployments" {
-  type = list(string)
+  type = set(string)
 }
 
-variable "dev_node_iam_role_arn" {
+variable "node_role_name" {
   type = string
 }
 

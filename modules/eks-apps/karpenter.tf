@@ -50,6 +50,11 @@ resource "helm_release" "karpenter" {
 }
 
 resource "kubernetes_manifest" "karpenter_nodepool" {
+  depends_on = [
+    helm_release.karpenter,
+    helm_release.karpenter_crd
+  ]
+
   count    = var.enable_karpenter ? 1 : 0
   provider = kubernetes
   manifest = {
@@ -96,6 +101,11 @@ resource "kubernetes_manifest" "karpenter_nodepool" {
 }
 
 resource "kubernetes_manifest" "karpenter_ec2nodeclass" {
+  depends_on = [
+    helm_release.karpenter,
+    helm_release.karpenter_crd
+  ]
+
   count    = var.enable_karpenter ? 1 : 0
   provider = kubernetes
   manifest = {

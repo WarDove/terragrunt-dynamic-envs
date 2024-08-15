@@ -25,6 +25,7 @@ inputs = {
   root_account_id    = local.core_account_ids["root"]
   account_role_name  = "terraform-execution-role"
   org_units          = ["SDLC", "Core"]
+  node_role_name     = "eks-node-role"
 }
 
 
