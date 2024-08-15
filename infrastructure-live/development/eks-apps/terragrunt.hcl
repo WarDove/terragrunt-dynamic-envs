@@ -8,6 +8,7 @@ dependency "eks-cluster" {
   mock_outputs = {
     enable_karpenter                   = false
     enable_albc                        = false
+    enable_es                          = false
     eks_vpc_id                         = "fake-vpc-id"
     karpenter_role_arn                 = "fake-role-arn"
     oidc_provider_arn                  = "fake-oidc-provider-arn"
@@ -20,8 +21,11 @@ dependency "eks-cluster" {
 inputs = {
   karpenter_version                  = "0.37.0"
   albc_version                       = "1.8.2"
+  albc_version                       = "1.8.2"
+  es_version                         = "0.10.0"
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
   enable_albc                        = dependency.eks-cluster.outputs.enable_albc
+  enable_es                          = dependency.eks-cluster.outputs.enable_es
   eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
   karpenter_role_arn                 = dependency.eks-cluster.outputs.karpenter_role_arn

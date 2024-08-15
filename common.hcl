@@ -27,6 +27,7 @@ inputs = {
   org_units          = ["SDLC", "Core"]
   node_role_name     = "eks-node-role"
   albc_role_name     = "eks-albc-role"
+  es_role_name       = "eks-es-role"
 }
 
 

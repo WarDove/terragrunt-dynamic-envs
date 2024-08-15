@@ -26,10 +26,6 @@ output "enable_karpenter" {
   value = var.enable_karpenter
 }
 
-output "enable_albc" {
-  value = var.enable_karpenter
-}
-
 output "karpenter_termination_queue_name" {
   value = var.enable_karpenter ? module.karpenter[0].queue_name : ""
 }
@@ -44,4 +40,20 @@ output "node_iam_role_arn" {
 
 output "node_instance_profile_name" {
   value = var.enable_karpenter ? module.karpenter[0].instance_profile_name : ""
+}
+
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
+
+output "enable_albc" {
+  value = var.enable_albc
+}
+
+################################################################################
+# External Secrets Operator
+################################################################################
+
+output "enable_es" {
+  value = var.enable_es
 }

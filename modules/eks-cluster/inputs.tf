@@ -28,10 +28,19 @@ variable "enable_albc" {
   default = false
 }
 
+variable "enable_es" {
+  type    = bool
+  default = false
+}
+
 variable "node_role_name" {
   type = string
 }
 
 variable "albc_role_name" {
+  type = string
+}
+
+variable "es_role_name" {
   type = string
 }
