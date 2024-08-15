@@ -7,7 +7,7 @@ dependency "eks-cluster" {
 }
 
 terraform {
-  source = "${get_repo_root()}/modules/eks-apps"
+  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
 }
 
 inputs = {

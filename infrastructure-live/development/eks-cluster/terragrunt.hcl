@@ -7,7 +7,7 @@ dependency "eks-vpc" {
 }
 
 terraform {
-  source = "${get_repo_root()}/modules/eks-cluster"
+  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
 }
 
 inputs = {

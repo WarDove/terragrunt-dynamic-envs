@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "${get_repo_root()}/modules/eks-vpc"
+  source = "${get_repo_root()}/modules/${basename(get_terragrunt_dir())}"
 }
 
 inputs = {
