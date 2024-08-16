@@ -18,6 +18,15 @@ variable "env" {
   type = string
 }
 
+variable "domain_config" {
+  type = map(object({
+    domain_name               = string
+    subject_alternative_names = list(string)
+    create                    = bool
+  }))
+}
+
+
 variable "enable_karpenter" {
   type    = bool
   default = false

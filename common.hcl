@@ -28,6 +28,19 @@ inputs = {
   node_role_name     = "eks-node-role"
   albc_role_name     = "eks-albc-role"
   es_role_name       = "eks-es-role"
+
+  domain_config = {
+    development = {
+      domain_name               = "dev.huseynov.net",
+      subject_alternative_names = ["*.dev.huseynov.net"]
+      create                    = false
+    }
+    production = {
+      domain_name               = "huseynov.net",
+      subject_alternative_names = ["*.huseynov.net"]
+      create                    = false
+    }
+  }
 }
 
 
