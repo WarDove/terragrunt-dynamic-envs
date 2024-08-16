@@ -21,8 +21,7 @@ dependency "eks-cluster" {
 inputs = {
   karpenter_version                  = "0.37.0"
   albc_version                       = "1.8.2"
-  albc_version                       = "1.8.2"
-  es_version                         = "0.9.13"
+  es_version                         = "0.10.0"
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
   enable_albc                        = dependency.eks-cluster.outputs.enable_albc
   enable_es                          = dependency.eks-cluster.outputs.enable_es
