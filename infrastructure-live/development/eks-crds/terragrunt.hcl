@@ -20,6 +20,7 @@ dependency "eks-cluster" {
 
 inputs = {
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
+  enable_es                   = dependency.eks-cluster.outputs.enable_es
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
   cluster_endpoint                   = dependency.eks-cluster.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data

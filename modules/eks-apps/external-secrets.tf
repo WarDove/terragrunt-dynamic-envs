@@ -12,6 +12,11 @@ resource "helm_release" "external_secrets" {
     name  = "installCRDs"
     value = "true"
   }
+
+  set {
+    name  = "webhook.port"
+    value = "9443"
+  }
 }
 
 resource "kubernetes_service_account" "cluster_secret_store" {
