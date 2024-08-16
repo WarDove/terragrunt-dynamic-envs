@@ -51,6 +51,10 @@ variable "node_instance_profile_name" {
   type = string
 }
 
+variable "account_id" {
+  type = string
+}
+
 ################################################################################
 # AWS Load Balancer Controller
 ################################################################################
@@ -60,6 +64,10 @@ variable "enable_albc" {
 }
 
 variable "albc_version" {
+  type = string
+}
+
+variable "albc_role_name" {
   type = string
 }
 
@@ -73,6 +81,10 @@ variable "eks_vpc_id" {
 
 variable "enable_es" {
   type = bool
+}
+
+variable "es_role_name" {
+  type = string
 }
 
 variable "es_version" {

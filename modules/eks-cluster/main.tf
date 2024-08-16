@@ -114,7 +114,7 @@ module "es_irsa_role" {
   oidc_providers = {
     sts = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["external-secrets:cluster-secret-store"]
+      namespace_service_accounts = ["external-secrets:external-secrets"]
     }
   }
 }
