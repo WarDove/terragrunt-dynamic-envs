@@ -31,4 +31,15 @@ resource "helm_release" "albc" {
     name  = "replicaCount"
     value = 1
   }
+
+  values = [
+    yamlencode(
+      {
+        "serviceAccount" = {
+          "annotations" = {
+            "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.account_id}:role/${var.albc_role_name}"
+          }
+        }
+    })
+  ]
 }
