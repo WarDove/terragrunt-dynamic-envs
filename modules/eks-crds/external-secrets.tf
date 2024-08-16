@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "cluster_secret_store_aws_secrets" {
             jwt = {
               serviceAccountRef = {
                 namespace : "external-secrets"
-                name = "cluster-secret-store"
+                name = "external-secrets"
               }
             }
           }
@@ -53,7 +53,7 @@ resource "kubernetes_manifest" "cluster_secret_store_aws_ssm" {
             jwt = {
               serviceAccountRef = {
                 namespace : "external-secrets"
-                name = "cluster-secret-store"
+                name = "external-secrets"
               }
             }
           }
