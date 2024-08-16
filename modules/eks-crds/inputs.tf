@@ -6,6 +6,10 @@ variable "env" {
   type = string
 }
 
+variable "region" {
+  type = string
+}
+
 variable "az_count" {
   type = number
 }
@@ -24,4 +28,12 @@ variable "cluster_certificate_authority_data" {
 
 variable "kubeconfig_profile" {
   type = string
+}
+
+variable "enable_karpenter" {
+  type = bool
+}
+
+variable "enable_es" {
+  type = bool
 }
