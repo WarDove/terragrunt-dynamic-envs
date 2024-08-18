@@ -57,3 +57,11 @@ output "enable_albc" {
 output "enable_es" {
   value = var.enable_es
 }
+
+################################################################################
+# External DNS Operator
+################################################################################
+
+output "enable_ed" {
+  value = var.enable_ed
+}

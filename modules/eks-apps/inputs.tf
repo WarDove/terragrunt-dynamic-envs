@@ -26,6 +26,13 @@ variable "region" {
   type = string
 }
 
+variable "domain_config" {
+  type = map(object({
+    domain_name               = string
+    subject_alternative_names = list(string)
+  }))
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
@@ -88,5 +95,21 @@ variable "es_role_name" {
 }
 
 variable "es_version" {
+  type = string
+}
+
+################################################################################
+# External DNS Operator
+################################################################################
+
+variable "enable_ed" {
+  type = bool
+}
+
+variable "ed_role_name" {
+  type = string
+}
+
+variable "ed_version" {
   type = string
 }

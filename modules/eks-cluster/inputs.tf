@@ -22,10 +22,8 @@ variable "domain_config" {
   type = map(object({
     domain_name               = string
     subject_alternative_names = list(string)
-    create                    = bool
   }))
 }
-
 
 variable "enable_karpenter" {
   type    = bool
@@ -42,6 +40,11 @@ variable "enable_es" {
   default = false
 }
 
+variable "enable_ed" {
+  type    = bool
+  default = false
+}
+
 variable "node_role_name" {
   type = string
 }
@@ -51,5 +54,9 @@ variable "albc_role_name" {
 }
 
 variable "es_role_name" {
+  type = string
+}
+
+variable "ed_role_name" {
   type = string
 }

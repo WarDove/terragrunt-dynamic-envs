@@ -63,6 +63,11 @@ module "eks" {
       selectors = [
         { namespace = "external-secrets" }
       ]
+    },
+    external-dns = {
+      selectors = [
+        { namespace = "external-dns" }
+      ]
     }
   }
 }

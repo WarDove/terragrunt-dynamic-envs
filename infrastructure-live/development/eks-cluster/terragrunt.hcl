@@ -16,6 +16,7 @@ inputs = {
   enable_albc      = true
   enable_karpenter = true
   enable_es        = true
+  enable_ed        = true
   subnet_ids       = dependency.eks-vpc.outputs.private_subnets
   vpc_id           = dependency.eks-vpc.outputs.vpc_id
 }

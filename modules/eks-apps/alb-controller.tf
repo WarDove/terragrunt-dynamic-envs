@@ -32,6 +32,11 @@ resource "helm_release" "albc" {
     value = 1
   }
 
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
+
   values = [
     yamlencode(
       {
