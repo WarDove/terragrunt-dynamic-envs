@@ -2,6 +2,10 @@ variable "cluster_name" {
   type = string
 }
 
+variable "eks_sg_id" {
+  type = string
+}
+
 variable "cluster_endpoint" {
   type = string
 }

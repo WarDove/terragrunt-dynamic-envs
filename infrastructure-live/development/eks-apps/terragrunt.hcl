@@ -11,6 +11,7 @@ dependency "eks-cluster" {
     enable_es                          = false
     enable_ed                          = false
     eks_vpc_id                         = "fake-vpc-id"
+    eks_sg_id                          = "fake-sg-id"
     karpenter_role_arn                 = "fake-role-arn"
     oidc_provider_arn                  = "fake-oidc-provider-arn"
     karpenter_termination_queue_name   = "fake-queue-name"
@@ -29,6 +30,7 @@ inputs = {
   enable_es                          = dependency.eks-cluster.outputs.enable_es
   enable_ed                          = dependency.eks-cluster.outputs.enable_ed
   eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
+  eks_sg_id                          = dependency.eks-cluster.outputs.eks_sg_id
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
   karpenter_role_arn                 = dependency.eks-cluster.outputs.karpenter_role_arn
   karpenter_termination_queue_name   = dependency.eks-cluster.outputs.karpenter_termination_queue_name
