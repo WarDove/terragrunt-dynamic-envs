@@ -3,7 +3,7 @@ include "root" {
 }
 
 dependencies {
-  paths = ["../eks-apps"]
+  paths = ["../eks-resources"]
 }
 
 dependency "eks-cluster" {
