@@ -68,6 +68,11 @@ module "eks" {
       selectors = [
         { namespace = "external-dns" }
       ]
+    },
+    argo = {
+      selectors = [
+        { namespace = "argo" }
+      ]
     }
   }
 }

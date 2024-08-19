@@ -14,6 +14,10 @@ output "eks_sg_id" {
   value = module.eks.cluster_security_group_id
 }
 
+output "acm_certificate_arn" {
+  value = module.acm.acm_certificate_arn
+}
+
 ################################################################################
 # Fargate
 ################################################################################
@@ -31,19 +35,19 @@ output "enable_karpenter" {
 }
 
 output "karpenter_termination_queue_name" {
-  value = var.enable_karpenter ? module.karpenter[0].queue_name : ""
+  value = join("", module.karpenter[*].queue_name)
 }
 
 output "karpenter_role_arn" {
-  value = var.enable_karpenter ? module.karpenter[0].iam_role_arn : ""
+  value = join("", module.karpenter[*].iam_role_arn)
 }
 
 output "node_iam_role_arn" {
-  value = var.enable_karpenter ? module.karpenter[0].node_iam_role_arn : ""
+  value = join("", module.karpenter[*].node_iam_role_arn)
 }
 
 output "node_instance_profile_name" {
-  value = var.enable_karpenter ? module.karpenter[0].instance_profile_name : ""
+  value = join("", module.karpenter[*].instance_profile_name)
 }
 
 ################################################################################

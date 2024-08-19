@@ -1,7 +1,3 @@
-locals {
-  domain_config = var.domain_config[var.env]
-}
-
 resource "helm_release" "external_dns" {
   count      = var.enable_ed ? 1 : 0
   name       = "external-dns"

@@ -37,6 +37,10 @@ variable "domain_config" {
   }))
 }
 
+variable "acm_certificate_arn" {
+  type = string
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
@@ -120,4 +124,23 @@ variable "ed_role_name" {
 
 variable "ed_version" {
   type = string
+}
+
+################################################################################
+# Argo
+################################################################################
+
+variable "argocd_version" {
+  type = string
+}
+
+# variable "github_webhook" {
+#   type = bool
+# }
+
+#variable "github_webhook_secret" {}
+
+
+variable "enable_argocd" {
+  type = bool
 }
