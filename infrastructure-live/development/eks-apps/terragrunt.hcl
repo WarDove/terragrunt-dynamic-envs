@@ -67,16 +67,9 @@ provider "helm" {
 EOF
 }
 
-# generate "provider_helm" {
-#   path      = "provider-helm.tf"
-#   if_exists = "overwrite"
-#   contents  = <<EOF
-
-# }
-# EOF
-# }
 
 /*
+
 Alternative kubernvrg  auth method
 
 data "aws_eks_cluster_auth" "eks" {
