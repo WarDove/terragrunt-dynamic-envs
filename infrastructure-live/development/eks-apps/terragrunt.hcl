@@ -31,6 +31,7 @@ inputs = {
   enable_ed                          = dependency.eks-cluster.outputs.enable_ed
   eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
   eks_sg_id                          = dependency.eks-cluster.outputs.eks_sg_id
+  albc_backend_sg_id                 = dependency.eks-cluster.outputs.albc_backend_sg_id
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
   karpenter_role_arn                 = dependency.eks-cluster.outputs.karpenter_role_arn
   karpenter_termination_queue_name   = dependency.eks-cluster.outputs.karpenter_termination_queue_name

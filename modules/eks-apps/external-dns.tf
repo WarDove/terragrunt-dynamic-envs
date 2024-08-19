@@ -22,6 +22,11 @@ resource "helm_release" "external_dns" {
     value = "external-dns"
   }
 
+  set {
+    name  = "policy"
+    value = "sync"
+  }
+
   values = [
     yamlencode(
       {

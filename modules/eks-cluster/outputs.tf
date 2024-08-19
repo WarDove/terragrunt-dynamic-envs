@@ -54,6 +54,10 @@ output "enable_albc" {
   value = var.enable_albc
 }
 
+output "albc_backend_sg_id" {
+  value = join("", aws_security_group.albc_backend_sg[*].id)
+}
+
 ################################################################################
 # External Secrets Operator
 ################################################################################

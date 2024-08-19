@@ -37,6 +37,11 @@ resource "helm_release" "albc" {
     value = "aws-load-balancer-controller"
   }
 
+  set {
+    name  = "backendSecurityGroup"
+    value = var.albc_backend_sg_id
+  }
+
   values = [
     yamlencode(
       {
@@ -65,11 +70,11 @@ resource "helm_release" "albc" {
 #     from_port       = 80
 #     to_port         = 80
 #     protocol        = "tcp"
-#     security_groups = [data.aws_security_group.albc_backend_sg.id]
+#     security_groups = [var.albc_backend_sg_id]
 #   }
 # }
-#
-#
+# #
+# #
 # resource "kubernetes_manifest" "test_sa_sgp" {
 #   manifest = {
 #     "apiVersion" = "vpcresources.k8s.aws/v1beta1"

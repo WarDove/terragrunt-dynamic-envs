@@ -82,6 +82,10 @@ variable "albc_role_name" {
   type = string
 }
 
+variable "albc_backend_sg_id" {
+  type = string
+}
+
 variable "eks_vpc_id" {
   type = string
 }
