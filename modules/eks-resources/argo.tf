@@ -1,7 +1,10 @@
 # ArgoCD
-
-
 resource "helm_release" "argocd" {
+  depends_on = [
+    helm_release.albc,
+    helm_release.external_dns
+  ]
+
   count      = var.enable_argocd ? 1 : 0
   name       = "argo"
   namespace  = "argo"
