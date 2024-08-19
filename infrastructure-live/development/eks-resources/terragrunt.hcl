@@ -12,6 +12,7 @@ dependency "eks-cluster" {
     enable_ed                          = false
     eks_vpc_id                         = "fake-vpc-id"
     eks_sg_id                          = "fake-sg-id"
+    albc_backend_sg_id                 = "fake-sg-id"
     karpenter_role_arn                 = "fake-role-arn"
     oidc_provider_arn                  = "fake-oidc-provider-arn"
     karpenter_termination_queue_name   = "fake-queue-name"
