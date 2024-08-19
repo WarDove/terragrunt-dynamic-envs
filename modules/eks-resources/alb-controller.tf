@@ -75,6 +75,8 @@ resource "helm_release" "albc" {
 # }
 # #
 # #
+
+# On fargate, ingress from eks VPC is granted automatically, so you might consider sgps for extra security
 # resource "kubernetes_manifest" "test_sa_sgp" {
 #   manifest = {
 #     "apiVersion" = "vpcresources.k8s.aws/v1beta1"
