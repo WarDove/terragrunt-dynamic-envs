@@ -4,6 +4,6 @@ include "root" {
 
 dependencies {
   paths = [
-    "${get_parent_terragrunt_dir()}/development/eks-apps"
+    "${get_parent_terragrunt_dir()}/development/eks-resources"
   ]
 }
