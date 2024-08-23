@@ -26,6 +26,7 @@ resource "helm_release" "external_secrets" {
             "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.account_id}:role/${var.es_role_name}"
           }
         }
-    })
+      }
+    )
   ]
 }

@@ -32,7 +32,8 @@ resource "helm_release" "external_dns" {
             "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.account_id}:role/${var.ed_role_name}"
           }
         }
-    })
+      }
+    )
   ]
 }
 

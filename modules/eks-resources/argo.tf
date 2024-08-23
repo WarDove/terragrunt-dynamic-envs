@@ -48,55 +48,57 @@ resource "helm_release" "argocd" {
   #   }
 
   values = [
-    yamlencode({
-      server = {
-        ingress = {
-          enabled    = true
-          controller = "aws" # | generic
-          annotations = {
-            #"alb.ingress.kubernetes.io/inbound-cidrs" = join(",", var.access_list_cidr)
-            "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
-            "alb.ingress.kubernetes.io/target-type" = "ip"
-            "alb.ingress.kubernetes.io/group.name"  = "public"
-            "alb.ingress.kubernetes.io/group.order" = "100"
-            "alb.ingress.kubernetes.io/actions.ssl-redirect" : "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
-            "alb.ingress.kubernetes.io/listen-ports" : "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
-            "alb.ingress.kubernetes.io/certificate-arn" : var.acm_certificate_arn
-            "external-dns.alpha.kubernetes.io/hostname" = "argocd.${local.domain_config.domain_name}"
-            "external-dns.alpha.kubernetes.io/ttl"      = "300"
-          }
-          ingressClassName = "alb"
-          hostname         = "argocd.${local.domain_config.domain_name}"
-          path             = "/"
-          pathType         = "Prefix"
-          extraPaths = [
-            {
-              path     = "/"
-              pathType = "Prefix"
-              backend = {
-                service = {
-                  name = "ssl-redirect"
-                  port = {
-                    name = "use-annotation"
+    yamlencode(
+      {
+        server = {
+          ingress = {
+            enabled    = true
+            controller = "aws" # | generic
+            annotations = {
+              #"alb.ingress.kubernetes.io/inbound-cidrs" = join(",", var.access_list_cidr)
+              "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
+              "alb.ingress.kubernetes.io/target-type" = "ip"
+              "alb.ingress.kubernetes.io/group.name"  = "public"
+              "alb.ingress.kubernetes.io/group.order" = "100"
+              "alb.ingress.kubernetes.io/actions.ssl-redirect" : "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
+              "alb.ingress.kubernetes.io/listen-ports" : "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
+              "alb.ingress.kubernetes.io/certificate-arn" : var.acm_certificate_arn
+              "external-dns.alpha.kubernetes.io/hostname" = "argocd.${local.domain_config.domain_name}"
+              "external-dns.alpha.kubernetes.io/ttl"      = "300"
+            }
+            ingressClassName = "alb"
+            hostname         = "argocd.${local.domain_config.domain_name}"
+            path             = "/"
+            pathType         = "Prefix"
+            extraPaths = [
+              {
+                path     = "/"
+                pathType = "Prefix"
+                backend = {
+                  service = {
+                    name = "ssl-redirect"
+                    port = {
+                      name = "use-annotation"
+                    }
                   }
                 }
               }
+            ]
+          }
+        }
+        controller = {
+          resources = {
+            requests = {
+              cpu    = "250m"
+              memory = "500Mi"
             }
-          ]
-        }
-      }
-      controller = {
-        resources = {
-          requests = {
-            cpu    = "250m"
-            memory = "500Mi"
-          }
-          limits = {
-            cpu    = "2"
-            memory = "4Gi"
+            limits = {
+              cpu    = "2"
+              memory = "4Gi"
+            }
           }
         }
       }
-    })
+    )
   ]
 }

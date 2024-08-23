@@ -50,19 +50,13 @@ resource "helm_release" "albc" {
             "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.account_id}:role/${var.albc_role_name}"
           }
         }
-    })
+      }
+    )
   ]
 }
 
 # TODO: these below have to be created on application module instead so remove inputs and adjust hcl files accordingly
-# data "aws_security_group" "albc_backend_sg" {
-#   depends_on = [helm_release.albc]
-#   filter {
-#     name   = "tag:elbv2.k8s.aws/resource"
-#     values = ["backend-sg"]
-#   }
-# }
-#
+
 # resource "aws_security_group" "test_pod_sg" {
 #   name   = "test-pod-sg"
 #   vpc_id = var.eks_vpc_id

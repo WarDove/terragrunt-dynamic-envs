@@ -144,3 +144,15 @@ variable "argocd_version" {
 variable "enable_argocd" {
   type = bool
 }
+
+
+################################################################################
+# Reloader
+################################################################################
+variable "enable_reloader" {
+  type = bool
+}
+
+variable "reloader_version" {
+  type = string
+}
