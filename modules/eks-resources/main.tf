@@ -1,5 +1,6 @@
 /*
 TODO: GITHUB ACTIONS RUNNER on k8s
+TODO: RUN TERRAFORM DYN CI in a k8s pod runner
 TODO: make optional - internal cluster access by adding extra security group respectively
 TODO: argo rollouts optional installation
 TODO: eks-apps module (Where to put awsecrets - potentially in eks-cluster module?)
