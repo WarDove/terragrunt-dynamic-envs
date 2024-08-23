@@ -1,7 +1,6 @@
 resource "kubernetes_manifest" "karpenter_nodepool" {
   count = var.enable_karpenter ? 1 : 0
 
-  provider = kubernetes
   manifest = {
     apiVersion = "karpenter.sh/v1beta1"
     kind       = "NodePool"
@@ -46,9 +45,8 @@ resource "kubernetes_manifest" "karpenter_nodepool" {
 }
 
 resource "kubernetes_manifest" "karpenter_ec2nodeclass" {
-  count = var.enable_es ? 1 : 0
+  count = var.enable_karpenter ? 1 : 0
 
-  provider = kubernetes
   manifest = {
     apiVersion = "karpenter.k8s.aws/v1beta1"
     kind       = "EC2NodeClass"
