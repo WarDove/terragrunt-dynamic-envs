@@ -13,7 +13,7 @@ variable "arc_version" {
 }
 
 variable "arc_runner_group" {
-  default = "allwhere"
+  default = "default"
 }
 
 variable "github_config_url" {
@@ -61,6 +61,11 @@ resource "helm_release" "arc_runner_set" {
   set {
     name  = "githubConfigUrl"
     value = var.github_config_url
+  }
+
+  set {
+    name  = "containerMode.type"
+    value = "dind"
   }
 
   set_sensitive {
