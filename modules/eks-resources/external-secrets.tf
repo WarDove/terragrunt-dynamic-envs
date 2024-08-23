@@ -5,6 +5,8 @@ resource "helm_release" "external_secrets" {
   repository = "https://charts.external-secrets.io"
   chart      = "external-secrets"
   version    = var.es_version
+  wait       = true
+  timeout    = 600
 
   create_namespace = true
 

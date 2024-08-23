@@ -77,7 +77,7 @@ EOF
 
 /*
 
-Alternative kubernvrg  auth method
+Alternative kubernetes  auth method
 
 data "aws_eks_cluster_auth" "eks" {
   name = var.cluster_name

@@ -4,6 +4,7 @@ terragrunt.iml
 vendor
 .terraform
 .vscode
+*.tfvars
 *.tfstate
 *.tfstate.backup
 *.out
