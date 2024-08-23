@@ -1,3 +1,4 @@
+# Note: on Fargate workloads, Pods get access from all IPs in the Cluster VPC CIDR, so attaching backend sg to the pod is not necessary
 resource "aws_security_group" "albc_backend_sg" {
   count       = var.enable_albc ? 1 : 0
   name        = "albc-backend-sg"
