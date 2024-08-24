@@ -52,6 +52,7 @@ resource "helm_release" "arc_runner_set" {
       {
         template = {
           spec = {
+            automountServiceAccountToken = false
             nodeSelector = {
               "karpenter.sh/nodepool" = "gha-runner"
             }
@@ -61,6 +62,77 @@ resource "helm_release" "arc_runner_set" {
                 operator = "Equal"
                 value    = "true"
                 effect   = "NoSchedule"
+              }
+            ]
+            containers = [
+              {
+                name    = "runner"
+                image   = "ghcr.io/actions/actions-runner:latest"
+                command = ["/home/runner/run.sh"]
+                env = [
+                  {
+                    name  = "DOCKER_HOST"
+                    value = "unix:///var/run/docker.sock"
+                  }
+                ]
+                volumeMounts = [
+                  {
+                    name      = "work"
+                    mountPath = "/home/runner/_work"
+                  },
+                  {
+                    name      = "dind-sock"
+                    mountPath = "/var/run"
+                  }
+                ]
+                resources = {
+                  requests = {
+                    cpu    = "500m"
+                    memory = "1Gi"
+                  }
+                  limits = {
+                    cpu    = "1000m"
+                    memory = "2Gi"
+                  }
+                }
+              },
+              {
+                name  = "dind"
+                image = "docker:dind"
+                args  = ["dockerd", "--host=unix:///var/run/docker.sock", "--group=$(DOCKER_GROUP_GID)"]
+                env = [
+                  {
+                    name  = "DOCKER_GROUP_GID"
+                    value = "123"
+                  }
+                ]
+                securityContext = {
+                  privileged = true
+                }
+                volumeMounts = [
+                  {
+                    name      = "work"
+                    mountPath = "/home/runner/_work"
+                  },
+                  {
+                    name      = "dind-sock"
+                    mountPath = "/var/run"
+                  },
+                  {
+                    name      = "dind-externals"
+                    mountPath = "/home/runner/externals"
+                  }
+                ]
+                resources = {
+                  requests = {
+                    cpu    = "1000m"
+                    memory = "2Gi"
+                  }
+                  limits = {
+                    cpu    = "2000m"
+                    memory = "4Gi"
+                  }
+                }
               }
             ]
           }
