@@ -54,6 +54,9 @@ resource "kubernetes_manifest" "karpenter_nodepool_gha_runner" {
       name = "gha-runner"
     }
     spec = {
+      disruption = {
+        consolidateAfter = "Never"
+      }
       limits = {
         cpu    = "800"
         memory = "800Gi"
@@ -62,7 +65,7 @@ resource "kubernetes_manifest" "karpenter_nodepool_gha_runner" {
         metadata = {
           labels = {
             self-managed-node                            = "true"
-            "bottlerocket.aws/updater-interface-version" = "2.0.0" # https://github.com/bottlerocket-os/bottlerocket-update-operator/tree/develop/deploy/charts/bottlerocket-update-operator#bottlerocket-update-operator-helm-chart
+            "bottlerocket.aws/updater-interface-version" = "2.0.0"
           }
         }
         spec = {
@@ -81,7 +84,7 @@ resource "kubernetes_manifest" "karpenter_nodepool_gha_runner" {
           requirements = [
             { key = "karpenter.k8s.aws/instance-category", operator = "In", values = ["m"] },
             { key = "karpenter.k8s.aws/instance-family", operator = "In", values = ["m5", "m5a"] },
-            { key = "karpenter.k8s.aws/instance-cpu", operator = "In", values = ["8", "16", "32"] },
+            { key = "karpenter.k8s.aws/instance-cpu", operator = "In", values = ["8", "16"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = local.azs },
             { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
