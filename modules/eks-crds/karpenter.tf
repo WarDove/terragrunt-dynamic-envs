@@ -63,6 +63,9 @@ resource "kubernetes_manifest" "karpenter_nodepool_gha_runner" {
       }
       template = {
         metadata = {
+          annotations = {
+            "karpenter.sh/do-not-disrupt" = "true"
+          }
           labels = {
             self-managed-node                            = "true"
             "bottlerocket.aws/updater-interface-version" = "2.0.0"
