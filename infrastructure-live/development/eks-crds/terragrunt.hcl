@@ -19,6 +19,8 @@ dependency "eks-cluster" {
 }
 
 inputs = {
+  enable_arc                         = true
+  arc_version                        = "0.9.3"
   enable_karpenter                   = dependency.eks-cluster.outputs.enable_karpenter
   enable_es                          = dependency.eks-cluster.outputs.enable_es
   node_instance_profile_name         = dependency.eks-cluster.outputs.node_instance_profile_name
