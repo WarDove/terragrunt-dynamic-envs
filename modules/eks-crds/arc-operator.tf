@@ -63,6 +63,11 @@ resource "helm_release" "arc_runner_set" {
     yamlencode(
       {
         template = {
+          metadata = {
+            annotations = {
+              "karpenter.sh/do-not-disrupt" = "true"
+            }
+          }
           spec = {
             serviceAccountName = "arc-runner-gha-rs-no-permission"
             nodeSelector = {
