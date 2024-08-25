@@ -33,14 +33,26 @@ resource "helm_release" "arc_runner_set" {
   }
 
   set {
+    name  = "minRunners"
+    value = 0
+  }
+
+  set {
+    name  = "maxRunners"
+    value = 50
+  }
+
+  set {
     name  = "githubConfigUrl"
     value = var.github_config_url
   }
 
-  set {
-    name  = "containerMode.type"
-    value = "dind"
-  }
+  /*
+    set {
+      name  = "containerMode.type"
+      value = "dind" # | kubernetes | for customization containerMode should remain empty
+    }
+  */
 
   set_sensitive {
     name  = "githubConfigSecret.github_token"
@@ -52,7 +64,7 @@ resource "helm_release" "arc_runner_set" {
       {
         template = {
           spec = {
-            automountServiceAccountToken = false
+            serviceAccountName = "arc-runner-gha-rs-no-permission"
             nodeSelector = {
               "karpenter.sh/nodepool" = "gha-runner"
             }
@@ -64,10 +76,23 @@ resource "helm_release" "arc_runner_set" {
                 effect   = "NoSchedule"
               }
             ]
+            initContainers = [
+              {
+                name    = "init-dind-externals"
+                image   = "ghcr.io/actions/actions-runner:2.319.1" # "ghcr.io/actions/actions-runner:latest"
+                command = ["cp", "-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
+                volumeMounts = [
+                  {
+                    name      = "dind-externals"
+                    mountPath = "/home/runner/tmpDir"
+                  }
+                ]
+              }
+            ]
             containers = [
               {
                 name    = "runner"
-                image   = "ghcr.io/actions/actions-runner:latest"
+                image   = "ghcr.io/actions/actions-runner:2.319.1" # "ghcr.io/actions/actions-runner:latest"
                 command = ["/home/runner/run.sh"]
                 env = [
                   {
@@ -98,7 +123,7 @@ resource "helm_release" "arc_runner_set" {
               },
               {
                 name  = "dind"
-                image = "docker:dind"
+                image = "docker:27.1.2-dind-alpine3.20" #"docker:dind"
                 args  = ["dockerd", "--host=unix:///var/run/docker.sock", "--group=$(DOCKER_GROUP_GID)"]
                 env = [
                   {
@@ -135,6 +160,20 @@ resource "helm_release" "arc_runner_set" {
                 ]
               }
             ]
+            volumes = [
+              {
+                name     = "work"
+                emptyDir = {}
+              },
+              {
+                name     = "dind-sock"
+                emptyDir = {}
+              },
+              {
+                name     = "dind-externals"
+                emptyDir = {}
+              }
+            ]
           }
         }
       }
@@ -155,13 +194,13 @@ resource "kubernetes_limit_range" "arc_runner_constraints" {
       type = "Container"
 
       default_request = {
-        cpu    = "2"
-        memory = "4Gi"
+        cpu    = "500m"
+        memory = "1Gi"
       }
 
       default = {
-        cpu    = "4"
-        memory = "8Gi"
+        cpu    = "1"
+        memory = "2Gi"
       }
 
       max = {

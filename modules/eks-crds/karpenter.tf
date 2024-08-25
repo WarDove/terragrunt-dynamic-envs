@@ -9,13 +9,13 @@ resource "kubernetes_manifest" "karpenter_nodepool" {
     }
     spec = {
       disruption = {
-        consolidationPolicy = var.env == "production" ? "WhenEmpty" : "WhenUnderutilized"
-        consolidateAfter    = var.env == "production" ? "Never" : "10m"
+        consolidationPolicy = "WhenEmpty"
+        consolidateAfter    = "30m"
         expireAfter         = "720h"
       }
       limits = {
         cpu    = "800"
-        memory = "800Gi"
+        memory = "1600Gi"
       }
       template = {
         metadata = {
@@ -56,17 +56,15 @@ resource "kubernetes_manifest" "karpenter_nodepool_gha_runner" {
     }
     spec = {
       disruption = {
-        consolidateAfter = "Never"
+        consolidationPolicy = "WhenEmpty"
+        consolidateAfter    = "5m"
       }
       limits = {
         cpu    = "800"
-        memory = "800Gi"
+        memory = "1600Gi"
       }
       template = {
         metadata = {
-          annotations = {
-            "karpenter.sh/do-not-disrupt" = "true"
-          }
           labels = {
             self-managed-node                            = "true"
             "bottlerocket.aws/updater-interface-version" = "2.0.0"
