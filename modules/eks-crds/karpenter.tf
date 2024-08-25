@@ -10,6 +10,7 @@ resource "kubernetes_manifest" "karpenter_nodepool" {
     spec = {
       disruption = {
         consolidationPolicy = var.env == "production" ? "WhenEmpty" : "WhenUnderutilized"
+        consolidateAfter    = var.env == "production" ? "Never" : "10m"
         expireAfter         = "720h"
       }
       limits = {

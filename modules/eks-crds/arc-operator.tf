@@ -75,6 +75,16 @@ resource "helm_release" "arc_runner_set" {
                     value = "unix:///var/run/docker.sock"
                   }
                 ]
+                resources = {
+                  requests = {
+                    cpu    = "2"
+                    memory = "4Gi"
+                  }
+                  limits = {
+                    cpu    = "4"
+                    memory = "8Gi"
+                  }
+                }
                 volumeMounts = [
                   {
                     name      = "work"
@@ -85,16 +95,6 @@ resource "helm_release" "arc_runner_set" {
                     mountPath = "/var/run"
                   }
                 ]
-                resources = {
-                  requests = {
-                    cpu    = "500m"
-                    memory = "1Gi"
-                  }
-                  limits = {
-                    cpu    = "1000m"
-                    memory = "2Gi"
-                  }
-                }
               },
               {
                 name  = "dind"
@@ -106,6 +106,16 @@ resource "helm_release" "arc_runner_set" {
                     value = "123"
                   }
                 ]
+                resources = {
+                  requests = {
+                    cpu    = "1"
+                    memory = "2Gi"
+                  }
+                  limits = {
+                    cpu    = "2"
+                    memory = "4Gi"
+                  }
+                }
                 securityContext = {
                   privileged = true
                 }
@@ -123,16 +133,6 @@ resource "helm_release" "arc_runner_set" {
                     mountPath = "/home/runner/externals"
                   }
                 ]
-                resources = {
-                  requests = {
-                    cpu    = "1000m"
-                    memory = "2Gi"
-                  }
-                  limits = {
-                    cpu    = "2000m"
-                    memory = "4Gi"
-                  }
-                }
               }
             ]
           }
@@ -140,4 +140,39 @@ resource "helm_release" "arc_runner_set" {
       }
     )
   ]
+}
+
+resource "kubernetes_limit_range" "arc_runner_constraints" {
+  depends_on = [helm_release.arc_runner_set]
+
+  metadata {
+    name      = "arc-runners-limit-range"
+    namespace = "arc-runners"
+  }
+
+  spec {
+    limit {
+      type = "Container"
+
+      default_request = {
+        cpu    = "2"
+        memory = "4Gi"
+      }
+
+      default = {
+        cpu    = "4"
+        memory = "8Gi"
+      }
+
+      max = {
+        cpu    = "8"
+        memory = "16Gi"
+      }
+
+      min = {
+        cpu    = "1m"
+        memory = "1Mi"
+      }
+    }
+  }
 }
