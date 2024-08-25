@@ -79,7 +79,7 @@ resource "helm_release" "arc_runner_set" {
             initContainers = [
               {
                 name    = "init-dind-externals"
-                image   = "ghcr.io/actions/actions-runner:2.319.1" # "ghcr.io/actions/actions-runner:latest"
+                image   = "ghcr.io/actions/actions-runner:2.319.1"
                 command = ["cp", "-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
                 volumeMounts = [
                   {
@@ -92,7 +92,7 @@ resource "helm_release" "arc_runner_set" {
             containers = [
               {
                 name    = "runner"
-                image   = "ghcr.io/actions/actions-runner:2.319.1" # "ghcr.io/actions/actions-runner:latest"
+                image   = "ghcr.io/actions/actions-runner:2.319.1"
                 command = ["/home/runner/run.sh"]
                 env = [
                   {
@@ -102,12 +102,12 @@ resource "helm_release" "arc_runner_set" {
                 ]
                 resources = {
                   requests = {
-                    cpu    = "2"
-                    memory = "4Gi"
+                    cpu    = "1"
+                    memory = "2Gi"
                   }
                   limits = {
-                    cpu    = "4"
-                    memory = "8Gi"
+                    cpu    = "2"
+                    memory = "4Gi"
                   }
                 }
                 volumeMounts = [
@@ -123,7 +123,7 @@ resource "helm_release" "arc_runner_set" {
               },
               {
                 name  = "dind"
-                image = "docker:27.1.2-dind-alpine3.20" #"docker:dind"
+                image = "docker:27.1.2-dind-alpine3.20"
                 args  = ["dockerd", "--host=unix:///var/run/docker.sock", "--group=$(DOCKER_GROUP_GID)"]
                 env = [
                   {
@@ -133,12 +133,12 @@ resource "helm_release" "arc_runner_set" {
                 ]
                 resources = {
                   requests = {
-                    cpu    = "1"
-                    memory = "2Gi"
-                  }
-                  limits = {
                     cpu    = "2"
                     memory = "4Gi"
+                  }
+                  limits = {
+                    cpu    = "4"
+                    memory = "8Gi"
                   }
                 }
                 securityContext = {
@@ -180,6 +180,7 @@ resource "helm_release" "arc_runner_set" {
     )
   ]
 }
+
 
 resource "kubernetes_limit_range" "arc_runner_constraints" {
   depends_on = [helm_release.arc_runner_set]
