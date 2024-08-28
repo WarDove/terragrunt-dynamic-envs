@@ -159,6 +159,17 @@ variable "github_webhook_secret" {
   sensitive = true
 }
 
+variable "gitops_repo_url" {
+  type = string
+}
+
+variable "gitops_pat" {
+  type      = string
+  sensitive = true
+}
+
+
+
 
 ################################################################################
 # Reloader

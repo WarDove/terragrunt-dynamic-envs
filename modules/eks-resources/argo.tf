@@ -24,28 +24,28 @@ resource "helm_release" "argocd" {
     value = "180s"
   }
 
-  #   set {
-  #     name  = "notifications.enabled"
-  #     value = var.notifications
-  #   }
-  #
-  #   set {
-  #     name  = "notifications.secret.create"
-  #     value = false
-  #   }
-  #
-  #   set {
-  #     name  = "notifications.cm.create"
-  #     value = false
-  #   }
+  set {
+    name  = "notifications.enabled"
+    value = false
+  }
 
-    dynamic "set" {
-      for_each = var.github_webhook ? [1] : []
-      content {
-        name  = "configs.secret.githubSecret"
-        value = var.github_webhook_secret
-      }
+  set {
+    name  = "notifications.secret.create"
+    value = false
+  }
+
+  set {
+    name  = "notifications.cm.create"
+    value = false
+  }
+
+  dynamic "set" {
+    for_each = var.github_webhook ? [1] : []
+    content {
+      name  = "configs.secret.githubSecret"
+      value = var.github_webhook_secret
     }
+  }
 
   values = [
     yamlencode(
@@ -102,6 +102,27 @@ resource "helm_release" "argocd" {
   ]
 }
 
+resource "kubernetes_secret" "argocd_private_repo_creds_https" {
+  count = var.enable_argo ? 1 : 0
+
+  metadata {
+    name      = "private-repo-creds-https"
+    namespace = helm_release.argocd[0].namespace
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repo-creds"
+    }
+  }
+
+  data = {
+    "type"     = "git"
+    "url"      = var.gitops_repo_url
+    "username" = "my-token"
+    "password" = var.gitops_pat
+  }
+
+  type = "Opaque"
+}
+
 resource "helm_release" "argo_rollouts" {
   count            = var.enable_argo ? 1 : 0
   name             = "argo-rollouts"
@@ -111,3 +132,4 @@ resource "helm_release" "argo_rollouts" {
   version          = var.argo_rollouts_version
   create_namespace = true
 }
+
