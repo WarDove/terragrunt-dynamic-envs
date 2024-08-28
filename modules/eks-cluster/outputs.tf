@@ -18,6 +18,10 @@ output "acm_certificate_arn" {
   value = module.acm.acm_certificate_arn
 }
 
+output "oidc_provider_arn" {
+  value = module.eks.oidc_provider_arn
+}
+
 ################################################################################
 # Fargate
 ################################################################################

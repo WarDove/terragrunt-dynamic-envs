@@ -1,9 +1,9 @@
 skip                          = true
 terragrunt_version_constraint = ">= 0.66"
 terraform_version_constraint  = ">= 1.9.0"
-retryable_errors = ["(?s).*failed calling webhook*"]
-retry_max_attempts = 2
-retry_sleep_interval_sec = 30
+retryable_errors              = ["(?s).*failed calling webhook*"]
+retry_max_attempts            = 2
+retry_sleep_interval_sec      = 30
 
 
 dependencies {

@@ -14,7 +14,7 @@ dependency "eks-cluster" {
     enable_es                          = false
     node_instance_profile_name         = "fake-instance-profile"
     cluster_endpoint                   = "https://fake.cluster.endpoint"
-    cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBN1FJREFRQUJNQTBHQ1NxR1NJYjMKRFFFQkN3VUFBNElCQVFBeEFsWUNMeFk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+    cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmd"
   }
 }
 
