@@ -1,17 +1,4 @@
-variable "deployments" {
-  type = set(string)
-}
-variable "cluster_name" {}
-variable "oidc_provider_arn" {}
-variable "kubeconfig_profile" {}
-variable "namespace" {}
-variable "cluster_certificate_authority_data" {}
-variable "cluster_endpoint" {}
 
-variable "dynamic_env" {
-  type    = bool
-  default = false
-}
 
 resource "kubernetes_namespace" "deployment_namespace" {
   metadata {
