@@ -1,4 +1,22 @@
 # ArgoCD
+data "aws_route53_zone" "this" {
+  count        = var.enable_argo ? 1 : 0
+  name         = local.domain_config.domain_name
+  private_zone = false
+}
+
+module "acm_argo" {
+  count   = var.enable_argo ? 1 : 0
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> 5.1.0"
+
+  domain_name = "argocd.${local.domain_config.domain_name}"
+  zone_id     = data.aws_route53_zone.this[0].zone_id
+
+  validation_method   = "DNS"
+  wait_for_validation = true
+}
+
 resource "helm_release" "argocd" {
   depends_on = [
     helm_release.albc,
@@ -61,7 +79,7 @@ resource "helm_release" "argocd" {
               "alb.ingress.kubernetes.io/group.order" = "100"
               "alb.ingress.kubernetes.io/actions.ssl-redirect" : "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
               "alb.ingress.kubernetes.io/listen-ports" : "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
-              "alb.ingress.kubernetes.io/certificate-arn" : var.acm_certificate_arn
+              "alb.ingress.kubernetes.io/certificate-arn" : module.acm_argo[0].acm_certificate_arn
               "external-dns.alpha.kubernetes.io/hostname" = "argocd.${local.domain_config.domain_name}"
               "external-dns.alpha.kubernetes.io/ttl"      = "300"
             }

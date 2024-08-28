@@ -8,7 +8,6 @@ dependency "eks-cluster" {
   mock_outputs = {
     eks_vpc_id                         = "fake-vpc-id"
     eks_sg_id                          = "fake-sg-id"
-    acm_certificate_arn                = "fake-acm-cert-arn"
     oidc_provider_arn                  = "fake-oidc-provider-arn"
     cluster_endpoint                   = "https://fake.cluster.endpoint"
     cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmd"
@@ -31,7 +30,6 @@ inputs = {
   enable_ed                          = true
   oidc_provider_arn                  = dependency.eks-cluster.outputs.oidc_provider_arn
   eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
-  acm_certificate_arn                = dependency.eks-cluster.outputs.acm_certificate_arn
   cluster_endpoint                   = dependency.eks-cluster.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data
 }

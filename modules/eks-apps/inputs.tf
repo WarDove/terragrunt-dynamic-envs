@@ -1,5 +1,6 @@
 variable "namespace" {}
 variable "oidc_provider_arn" {}
+variable "env" {}
 
 
 
