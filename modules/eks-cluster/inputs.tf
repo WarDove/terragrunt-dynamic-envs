@@ -60,3 +60,8 @@ variable "es_role_name" {
 variable "ed_role_name" {
   type = string
 }
+
+variable "dynamic_env_support" {
+  type    = bool
+  default = false
+}

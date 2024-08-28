@@ -39,6 +39,10 @@ inputs = {
       domain_name               = "huseynov.net",
       subject_alternative_names = ["*.huseynov.net"]
     }
+    dynamic = {
+      domain_name               = "sb.huseynov.net",
+      subject_alternative_names = ["*.sb.huseynov.net"]
+    }
   }
 }
 
