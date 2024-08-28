@@ -39,13 +39,13 @@ resource "helm_release" "argocd" {
   #     value = false
   #   }
 
-  #   dynamic "set" {
-  #     for_each = var.github_webhook ? [1] : []
-  #     content {
-  #       name  = "configs.secret.githubSecret"
-  #       value = var.github_webhook_secret
-  #     }
-  #   }
+    dynamic "set" {
+      for_each = var.github_webhook ? [1] : []
+      content {
+        name  = "configs.secret.githubSecret"
+        value = var.github_webhook_secret
+      }
+    }
 
   values = [
     yamlencode(
@@ -101,7 +101,6 @@ resource "helm_release" "argocd" {
     )
   ]
 }
-
 
 resource "helm_release" "argo_rollouts" {
   count            = var.enable_argo ? 1 : 0

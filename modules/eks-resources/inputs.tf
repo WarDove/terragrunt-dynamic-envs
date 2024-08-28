@@ -149,6 +149,16 @@ variable "enable_argo" {
   type = bool
 }
 
+variable "github_webhook" {
+  type    = bool
+  default = true
+}
+
+variable "github_webhook_secret" {
+  type      = string
+  sensitive = true
+}
+
 
 ################################################################################
 # Reloader

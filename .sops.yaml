@@ -1,0 +1,7 @@
+creation_rules:
+    - path_regex: secrets\.*
+      kms: 'arn:aws:kms:us-east-2:011528295601:alias/sops'
+      aws_profile: mycompany-shared-services-tf
+    - path_regex: secrets\.*
+      kms: 'arn:aws:kms:eu-central-1:011528295601:alias/sops'
+      aws_profile: mycompany-shared-services-tf

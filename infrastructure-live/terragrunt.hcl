@@ -12,6 +12,7 @@ terraform {
 
 locals {
   common_vars        = read_terragrunt_config(find_in_parent_folders("common.hcl"))
+  secret_vars        = yamldecode(sops_decrypt_file(find_in_parent_folders("secrets.yaml")))
   company_prefix     = local.common_vars.inputs.company_prefix
   env                = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
   env_regex          = "infrastructure-live/([a-zA-Z0-9-]+)/"
@@ -25,6 +26,7 @@ locals {
 
 inputs = merge(
   local.common_vars.inputs,
+  local.secret_vars,
   {
     env                = local.env
     dev_only           = true
