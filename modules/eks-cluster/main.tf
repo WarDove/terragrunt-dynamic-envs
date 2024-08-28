@@ -71,7 +71,8 @@ module "eks" {
     },
     argo = {
       selectors = [
-        { namespace = "argo" }
+        { namespace = "argo-cd" },
+        { namespace = "argo-rollouts" }
       ]
     }
   }

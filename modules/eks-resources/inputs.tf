@@ -130,7 +130,11 @@ variable "ed_version" {
 # Argo
 ################################################################################
 
-variable "argocd_version" {
+variable "argo_cd_version" {
+  type = string
+}
+
+variable "argo_rollouts_version" {
   type = string
 }
 
@@ -141,7 +145,7 @@ variable "argocd_version" {
 #variable "github_webhook_secret" {}
 
 
-variable "enable_argocd" {
+variable "enable_argo" {
   type = bool
 }
 

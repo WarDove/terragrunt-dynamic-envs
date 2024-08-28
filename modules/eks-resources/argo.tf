@@ -5,12 +5,12 @@ resource "helm_release" "argocd" {
     helm_release.external_dns
   ]
 
-  count      = var.enable_argocd ? 1 : 0
-  name       = "argo"
-  namespace  = "argo"
+  count      = var.enable_argo ? 1 : 0
+  name       = "argo-cd"
+  namespace  = "argo-cd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  version    = var.argocd_version
+  version    = var.argo_cd_version
 
   create_namespace = true
 
@@ -55,7 +55,6 @@ resource "helm_release" "argocd" {
             enabled    = true
             controller = "aws" # | generic
             annotations = {
-              #"alb.ingress.kubernetes.io/inbound-cidrs" = join(",", var.access_list_cidr)
               "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
               "alb.ingress.kubernetes.io/target-type" = "ip"
               "alb.ingress.kubernetes.io/group.name"  = "public"
@@ -101,4 +100,15 @@ resource "helm_release" "argocd" {
       }
     )
   ]
+}
+
+
+resource "helm_release" "argo_rollouts" {
+  count            = var.enable_argo ? 1 : 0
+  name             = "argo-rollouts"
+  namespace        = "argo-rollouts"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-rollouts"
+  version          = var.argo_rollouts_version
+  create_namespace = true
 }
