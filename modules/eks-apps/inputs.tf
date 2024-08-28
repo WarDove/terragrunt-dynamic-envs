@@ -17,7 +17,7 @@ variable "cluster_name" {}
 #   type = set(string)
 # }
 #
-variable "dynamic_env" {
+variable "dynamic" {
   type    = bool
   default = false
 }

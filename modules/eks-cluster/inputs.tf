@@ -17,15 +17,3 @@ variable "vpc_id" {
 variable "env" {
   type = string
 }
-
-variable "domain_config" {
-  type = map(object({
-    domain_name               = string
-    subject_alternative_names = list(string)
-  }))
-}
-
-variable "dynamic_env_support" {
-  type    = bool
-  default = false
-}
