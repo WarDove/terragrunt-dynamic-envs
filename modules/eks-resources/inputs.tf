@@ -2,10 +2,6 @@ variable "cluster_name" {
   type = string
 }
 
-variable "eks_sg_id" {
-  type = string
-}
-
 variable "cluster_endpoint" {
   type = string
 }
@@ -30,6 +26,10 @@ variable "region" {
   type = string
 }
 
+variable "account_id" {
+  type = string
+}
+
 variable "domain_config" {
   type = map(object({
     domain_name               = string
@@ -38,6 +38,10 @@ variable "domain_config" {
 }
 
 variable "acm_certificate_arn" {
+  type = string
+}
+
+variable "oidc_provider_arn" {
   type = string
 }
 
@@ -54,19 +58,7 @@ variable "karpenter_version" {
   type = string
 }
 
-variable "karpenter_role_arn" {
-  type = string
-}
-
-variable "karpenter_termination_queue_name" {
-  type = string
-}
-
-variable "node_instance_profile_name" {
-  type = string
-}
-
-variable "account_id" {
+variable "node_role_name" {
   type = string
 }
 
@@ -82,14 +74,6 @@ variable "albc_version" {
   type = string
 }
 
-variable "albc_role_name" {
-  type = string
-}
-
-variable "albc_backend_sg_id" {
-  type = string
-}
-
 variable "eks_vpc_id" {
   type = string
 }
@@ -102,10 +86,6 @@ variable "enable_es" {
   type = bool
 }
 
-variable "es_role_name" {
-  type = string
-}
-
 variable "es_version" {
   type = string
 }
@@ -116,10 +96,6 @@ variable "es_version" {
 
 variable "enable_ed" {
   type = bool
-}
-
-variable "ed_role_name" {
-  type = string
 }
 
 variable "ed_version" {

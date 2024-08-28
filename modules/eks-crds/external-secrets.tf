@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "cluster_secret_store_aws_secrets" {
         {
           namespaceSelector = {
             matchLabels = {
-              "kubernetes.io/environment" = var.env # TODO: Change this to the correct label in future
+              "kubernetes.io/environment" = var.env
             }
           }
         }

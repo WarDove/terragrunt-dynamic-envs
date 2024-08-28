@@ -25,10 +25,8 @@ inputs = {
   root_account_id    = local.core_account_ids["root"]
   account_role_name  = "terraform-execution-role"
   org_units          = ["SDLC", "Core"]
-  node_role_name     = "eks-node-role"
-  albc_role_name     = "eks-albc-role"
-  es_role_name       = "eks-es-role"
-  ed_role_name       = "eks-ed-role"
+
+  node_role_name = "eks-node-role"
 
   domain_config = {
     development = {

@@ -25,42 +25,6 @@ variable "domain_config" {
   }))
 }
 
-variable "enable_karpenter" {
-  type    = bool
-  default = false
-}
-
-variable "enable_albc" {
-  type    = bool
-  default = false
-}
-
-variable "enable_es" {
-  type    = bool
-  default = false
-}
-
-variable "enable_ed" {
-  type    = bool
-  default = false
-}
-
-variable "node_role_name" {
-  type = string
-}
-
-variable "albc_role_name" {
-  type = string
-}
-
-variable "es_role_name" {
-  type = string
-}
-
-variable "ed_role_name" {
-  type = string
-}
-
 variable "dynamic_env_support" {
   type    = bool
   default = false
