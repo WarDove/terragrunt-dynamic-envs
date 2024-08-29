@@ -3,7 +3,7 @@ output "enable_karpenter" {
 }
 
 output "enable_es" {
-  value = enable_es
+  value = var.enable_es
 }
 
 output "node_instance_profile_name" {

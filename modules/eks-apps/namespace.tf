@@ -6,7 +6,7 @@ resource "kubernetes_namespace" "deployment_namespace" {
     }
     annotations = {
       name    = var.namespace
-      dynamic = var.dynamic_env
+      dynamic = var.dynamic
     }
   }
 }

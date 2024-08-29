@@ -29,7 +29,7 @@ inputs = {
   enable_es                          = true
   enable_ed                          = true
   oidc_provider_arn                  = dependency.eks-cluster.outputs.oidc_provider_arn
-  eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
+  eks_vpc_id                             = dependency.eks-cluster.outputs.eks_vpc_id
   cluster_endpoint                   = dependency.eks-cluster.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data
 }

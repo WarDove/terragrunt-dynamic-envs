@@ -2,6 +2,10 @@ include "root" {
   path = find_in_parent_folders()
 }
 
+dependencies {
+  paths = ["../eks-resources"]
+}
+
 dependency "eks-cluster" {
   config_path                             = "../eks-cluster"
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]

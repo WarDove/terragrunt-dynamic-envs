@@ -2,21 +2,26 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-dependencies {
-  paths = ["../eks-resources"]
-}
 
 dependency "eks-cluster" {
   config_path                             = "../eks-cluster"
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
   mock_outputs = {
-    enable_karpenter                   = false
-    enable_es                          = false
-    node_instance_profile_name         = "fake-instance-profile"
     cluster_endpoint                   = "https://fake.cluster.endpoint"
     cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmd"
   }
 }
+
+dependency "eks-resources" {
+  config_path                             = "../eks-resources"
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs = {
+    enable_karpenter                   = false
+    enable_es                          = false
+    node_instance_profile_name         = "fake-instance-profile"
+  }
+}
+
 
 inputs = {
   enable_arc                         = true
