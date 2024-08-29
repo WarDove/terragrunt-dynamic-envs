@@ -37,8 +37,8 @@ module "application_irsa_role" {
   source   = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version  = "~> 5.44.0"
 
-  role_name        = "${each.key}-irsa-role-${var.namespace}"
-  role_policy_arns = each.value[*].arn
+  role_name = "${each.key}-irsa-role-${var.namespace}"
+  role_policy_arns = { application_policy = each.value.arn }
 
   oidc_providers = {
     sts = {
