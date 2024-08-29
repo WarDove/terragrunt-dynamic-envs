@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "application_policy" {
 
 resource "aws_iam_policy" "application_policy" {
   for_each    = var.app_statements
-  name        = "${each.value}-irsa-policy-${var.namespace}"
-  description = "${title(each.value)} IAM policy for dedicated IRSA"
+  name        = "${each.key}-irsa-policy-${var.namespace}"
+  description = "${title(each.key)} IAM policy for dedicated IRSA"
   policy      = data.aws_iam_policy_document.application_policy[each.key].json
 }
