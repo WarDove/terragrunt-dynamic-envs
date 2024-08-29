@@ -7,5 +7,5 @@ output "enable_es" {
 }
 
 output "node_instance_profile_name" {
-  value = join("", module.karpenter[0].instance_profile_name)
+  value = join("", module.karpenter[*].instance_profile_name)
 }
