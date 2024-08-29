@@ -14,7 +14,7 @@ dependency "eks-cluster" {
 
 dependency "eks-resources" {
   config_path                             = "../eks-resources"
-  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["validate", "plan", "destroy"]
   mock_outputs = {
     enable_karpenter           = false
     enable_es                  = false

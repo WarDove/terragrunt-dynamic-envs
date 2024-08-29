@@ -10,6 +10,8 @@ module "acm_argo" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 5.1.0"
 
+  depends_on = [helm_release.albc]
+
   domain_name = "argocd.${local.domain_config.domain_name}"
   zone_id     = data.aws_route53_zone.this[0].zone_id
 

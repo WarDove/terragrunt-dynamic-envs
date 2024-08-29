@@ -15,17 +15,6 @@ module "albc_irsa_role" {
   }
 }
 
-resource "aws_security_group" "albc_backend_sg" {
-  count       = var.enable_albc ? 1 : 0
-  name        = "albc-backend-sg"
-  description = "Security group for the ALBC backend, to provide access to individual exposed pods"
-  vpc_id      = var.eks_vpc_id
-
-  tags = {
-    "elbv2.k8s.aws/resource" = "backend-sg"
-  }
-}
-
 resource "helm_release" "albc" {
   count        = var.enable_albc ? 1 : 0
   name         = "aws-lbc"
@@ -65,11 +54,6 @@ resource "helm_release" "albc" {
     value = "aws-load-balancer-controller"
   }
 
-  set {
-    name  = "backendSecurityGroup"
-    value = aws_security_group.albc_backend_sg[0].id
-  }
-
   values = [
     yamlencode(
       {
@@ -82,3 +66,26 @@ resource "helm_release" "albc" {
     )
   ]
 }
+
+/*
+
+We can provision albc backend sg individually to have more control over the pod security group rules
+or of course we can get the created albc backend sg id as a data source and use the same way
+
+resource "aws_security_group" "albc_backend_sg" {
+count       = var.enable_albc ? 1 : 0
+name        = "albc-backend-sg"
+description = "Security group for the ALBC backend, to provide access to individual exposed pods"
+vpc_id      = var.eks_vpc_id
+
+tags = {
+  "elbv2.k8s.aws/resource" = "backend-sg"
+}
+}
+
+set {
+  name  = "backendSecurityGroup"
+  value = aws_security_group.albc_backend_sg[0].id
+}
+
+*/
