@@ -25,7 +25,6 @@ locals {
   profile            = "${local.company_prefix}-shared-services-tf"
   kubeconfig_profile = "${local.company_prefix}-${local.env}-tf"
   region             = "us-east-2"
-
 }
 
 inputs = merge(
