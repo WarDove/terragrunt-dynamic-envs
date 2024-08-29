@@ -16,9 +16,9 @@ dependency "eks-resources" {
   config_path                             = "../eks-resources"
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
   mock_outputs = {
-    enable_karpenter                   = false
-    enable_es                          = false
-    node_instance_profile_name         = "fake-instance-profile"
+    enable_karpenter           = false
+    enable_es                  = false
+    node_instance_profile_name = "fake-instance-profile"
   }
 }
 

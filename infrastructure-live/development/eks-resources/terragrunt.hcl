@@ -7,7 +7,6 @@ dependency "eks-cluster" {
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
   mock_outputs = {
     eks_vpc_id                         = "fake-vpc-id"
-    eks_sg_id                          = "fake-sg-id"
     oidc_provider_arn                  = "fake-oidc-provider-arn"
     cluster_endpoint                   = "https://fake.cluster.endpoint"
     cluster_certificate_authority_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJJakFOQmd"
@@ -29,7 +28,7 @@ inputs = {
   enable_es                          = true
   enable_ed                          = true
   oidc_provider_arn                  = dependency.eks-cluster.outputs.oidc_provider_arn
-  eks_vpc_id                             = dependency.eks-cluster.outputs.eks_vpc_id
+  eks_vpc_id                         = dependency.eks-cluster.outputs.eks_vpc_id
   cluster_endpoint                   = dependency.eks-cluster.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data
 }

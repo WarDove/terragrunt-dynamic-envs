@@ -1,15 +1,32 @@
-module "eks_app_permissions" {
-  source            = "./modules/eks-app-permissions"
-  namespace         = var.namespace
-  oidc_provider_arn = var.oidc_provider_arn
-  app_statements = {
-    #     mono-service = {
-    #       actions   = [],
-    #       resources = []
-  }
-}
-
 locals {
+  eks_app_statements = [
+    {
+      name = "app1"
+      statements = [
+        {
+          effect   = "Allow"
+          actions  = ["s3:GetObject"]
+          resources = ["arn:aws:s3:::bucket_name/*"]
+        },
+        {
+          effect   = "Deny"
+          actions  = ["s3:DeleteObject"]
+          resources = ["arn:aws:s3:::bucket_name/*"]
+        }
+      ]
+    },
+    {
+      name = "app2"
+      statements = [
+        {
+          effect   = "Allow"
+          actions  = ["sqs:SendMessage"]
+          resources = ["arn:aws:sqs:::queue_name"]
+        }
+      ]
+    }
+  ]
+
   eks_app_buckets = [
     {
       name                     = "sandbox-test-bucket-123123"
