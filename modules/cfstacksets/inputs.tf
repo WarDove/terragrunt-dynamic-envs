@@ -11,3 +11,7 @@ variable "root_account_id" {
 variable "org_ou_ids" {
   type = map(string)
 }
+
+variable "security_account_id" {
+  type = string
+}
