@@ -49,6 +49,6 @@ resource "aws_cloudformation_stack_set" "terraform_role_sdlc" {
 resource "aws_cloudformation_stack_set_instance" "terraform_role_sdlc" {
   stack_set_name = aws_cloudformation_stack_set.terraform_role_sdlc.name
   deployment_targets {
-    organizational_unit_ids = [var.org_ou_ids["sdlc"]]
+    organizational_unit_ids = [var.org_ou_ids["sdlc"], var.org_ou_ids["security"]]
   }
 }

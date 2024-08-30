@@ -8,6 +8,10 @@ locals {
     root            = "166733594871"
     shared-services = "011528295601"
   }
+
+  security_account_ids = {
+    security = "692859922290"
+  }
 }
 
 inputs = {
@@ -17,14 +21,16 @@ inputs = {
     "app3"
   ]
 
-  company_prefix     = "mycompany"
-  sdlc_account_ids   = local.sdlc_account_ids
-  core_account_ids   = local.core_account_ids
-  org_account_ids    = merge(local.sdlc_account_ids, local.core_account_ids)
-  shared_services_id = local.core_account_ids["shared-services"]
-  root_account_id    = local.core_account_ids["root"]
-  account_role_name  = "terraform-execution-role"
-  org_units          = ["SDLC", "Core"]
+  company_prefix       = "mycompany"
+  sdlc_account_ids     = local.sdlc_account_ids
+  core_account_ids     = local.core_account_ids
+  security_account_ids = local.security_account_ids
+  org_account_ids      = merge(local.sdlc_account_ids, local.core_account_ids, local.security_account_ids)
+  shared_services_id   = local.core_account_ids["shared-services"]
+  root_account_id      = local.core_account_ids["root"]
+  security_account_id  = local.core_account_ids["root"]
+  account_role_name    = "terraform-execution-role"
+  org_units            = ["SDLC", "Core", "Security"]
 
   node_role_name = "eks-node-role"
 
