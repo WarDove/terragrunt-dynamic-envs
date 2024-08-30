@@ -15,3 +15,8 @@ variable "org_ou_ids" {
 variable "security_account_id" {
   type = string
 }
+
+variable "naa_enabled" {
+  type    = bool
+  default = false
+}

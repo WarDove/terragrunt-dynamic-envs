@@ -1,4 +1,4 @@
-variable "vpc_cidr" {
+variable "naa_vpc_cidr" {
   type    = string
   default = "10.50.0.0/16"
 }
@@ -23,4 +23,9 @@ variable "company_prefix" {
 variable "email_address" {
   type    = string
   default = "tarlan@huseynov.net"
+}
+
+variable "naa_enabled" {
+  type    = bool
+  default = false
 }

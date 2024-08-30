@@ -1,4 +1,5 @@
 resource "aws_cloudformation_stack_set" "naa_execrole" {
+  count            = var.naa_enabled ? 1 : 0
   permission_model = "SERVICE_MANAGED"
   name             = "naa-execrole"
 
@@ -20,7 +21,8 @@ resource "aws_cloudformation_stack_set" "naa_execrole" {
 }
 
 resource "aws_cloudformation_stack_set_instance" "naa_execrole" {
-  stack_set_name = aws_cloudformation_stack_set.naa_execrole.name
+  count          = var.naa_enabled ? 1 : 0
+  stack_set_name = aws_cloudformation_stack_set.naa_execrole[0].name
 
   deployment_targets {
     organizational_unit_ids = [var.org_ou_ids["sdlc"]]
