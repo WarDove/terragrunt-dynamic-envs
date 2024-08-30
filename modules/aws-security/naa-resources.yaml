@@ -1,0 +1,616 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Deploys an EC2 Instance, S3 bucket, and IAM Cross-Account trusted Role for use with the Network Access Analyzer script. 
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Network Configuration"
+        Parameters:
+          - VpcId
+          - SubnetId
+      - Label:
+          default: "EC2 Configuration"
+        Parameters:
+          - InstanceType
+          - InstanceImageId
+          - KeyPairName
+          - PermittedSSHInbound
+      - Label:
+          default: "S3 Configuration"
+        Parameters:
+          - BucketName
+      - Label:
+          default: "SNS Configuration"
+        Parameters:
+          - EmailAddress          
+          - EmailNotificationsForSecurityHub
+      - Label:
+          default: "IAM Configuration"
+        Parameters:
+          - IAMNAAEC2Role
+          - IAMNAAExecRole
+      - Label:
+          default: "Network Access Analyzer Script Parameters (Note: After EC2 provisioning, local files mentioned in the description must be modified to further adjust)"
+        Parameters:
+          - Parallelism
+          - Regions
+          - ScopeNameValue
+          - ExclusionsFile
+          - FindingsToCSV
+          - FindingsToSecurityHub
+          - ScheduledAnalysis
+          - CronScheduleExpression
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: Select a VPC
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select a private subnet with Internet access. (User data is dependent on Internet for downloading binaries during EC2 provisioning)
+  InstanceImageId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Description: Amazon Linux 2023 Image
+    Default: "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  InstanceType:
+    Type: String
+    Description: "Specify the instance size to use"
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t2.small
+  BucketName:
+    Type: String
+    Description: Specify the Bucket Name for the NAA output and exception file download (Account ID and Region will be appended e.g. naa-<AccountID>-<region>)
+    Default: naa
+  EmailAddress:
+    Type: String
+    Description: "Optional: If you wish to receive a notification when NAA is completed and has uploaded the zip file containing findings, enter an email address and accept the topic subscription before NAA completes the assessment"
+  IAMNAAEC2Role:
+    Type: "String"
+    Description: "Name of IAM Role to be created for use with the NAA EC2 Instance. This role's ARN is used with the NAAExecRole CFN template"
+    Default: "NAAEC2Role"
+  IAMNAAExecRole:
+    Type: "String"
+    Description: "Name of IAM Role to be assumed in the member accounts. This name must match the IAM Role deployed via the NAAExecRole CFN template"
+    Default: "NAAExecRole"
+  Parallelism:
+    Type: String
+    Description: "Specify the number of accounts to assess in parallel (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: 10
+    AllowedValues:
+      - 10
+      - 12
+      - 14
+  Regions:
+    Type: String
+    Description: "Specify the regions which will be analyzed.  Use space separation when listing multiple regions (e.g. us-east-1 us-east-2) (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: us-east-1
+  KeyPairName:
+    Type: "String"
+    Description: "Optional: Specify the name of a pre-existing EC2 KeyPair if you require ssh to the NAA instance.  Recommendation is to leave blank and use SSM Connect"
+  PermittedSSHInbound:
+    Type: "String"
+    Description: "Optional: If allowing inbound SSH, specify the permitted CIDR else leave the default 127.0.0.1"
+    Default: "127.0.0.1/32"
+  ScopeNameValue:
+    Type: "String"
+    Description: "Name of Network Access Analyzer scope tag which is assigned during deployment (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: "naa-external-ingress"
+  ExclusionsFile:
+    Type: "String"
+    Description: "Name of the exclusions file which is used to exclude findings from CSV output (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: "naa-exclusions.csv"
+  FindingsToCSV:
+    Type: "String"
+    Description: "Specify true to output findings to a CSV and have it uploaded to the S3 bucket or false to disable (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+  FindingsToSecurityHub:
+    Type: "String"
+    Description: "Specify true to import findings into Security Hub or false to disable. Note: Security Hub must be enabled in the AWS account where the NAA EC2 is deployed (Utilized in /usr/local/naa/naa-script.sh)"
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+  EmailNotificationsForSecurityHub:
+    Type: "String"
+    Description: "Specify true to send email notifications when findings are import into Security Hub.  Requires an Email Address to be provided, as well as, FindingsToSecurityHub to be true"
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+  ScheduledAnalysis:
+    Type: "String"
+    Description: "Schedule automated analysis via cron. If true, the CronScheduleExpression parameter is used, else it is ignored (Utilized in /etc/cron.d/naa-schedule.  Delete this file to remove the cron schedule)"
+    Default: "true"
+    AllowedValues:
+      - true
+      - false
+  CronScheduleExpression:
+    Type: "String"
+    Description: "Specify the frequency of Network Access Analyzer analysis via cron expression (e.g. Midnight on Sunday 0 0 * * 0 OR Midnight on First Sunday of each month 0 0 * 1-12 0) (Utilized in /etc/cron.d/naa-schedule)"
+    Default: "0 0 * * 0"
+
+Mappings: 
+  PartitionMap: 
+    aws:
+      ec2service: ec2.amazonaws.com
+    aws-us-gov:
+      ec2service: ec2.amazonaws.com
+    aws-cn:
+      ec2service: ec2.amazonaws.com.cn
+
+Conditions:
+  KeyProvided:
+    Fn::Not:
+      - Fn::Equals:
+          - ""
+          - Ref: KeyPairName
+
+  EmailProvided:
+    Fn::Not:
+      - Fn::Equals:
+          - ""
+          - Ref: EmailAddress
+
+  SHEmailConfirmed:
+    Fn::Equals:
+      - "true"
+      - Ref: EmailNotificationsForSecurityHub
+
+Resources:
+  NAAEC2RolePolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "The resource must remain as * in order to list accounts in the AWS Org."
+          - id: W28
+            reason: "The IAM Role name is specified as an explicit for use within the scripting"
+    Properties:
+      Description: "This policy grants necessary permissions to assume NAAExecRole in AWS accounts"
+      ManagedPolicyName: !Sub "${IAMNAAEC2Role}Policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Resource: !Sub "arn:${AWS::Partition}:iam::*:role/${IAMNAAExecRole}"
+          - Effect: Allow
+            Sid: AllowDescribeOrg
+            Action:
+              - "organizations:DescribeOrganization"
+            Resource: "*"
+          - Effect: Allow
+            Sid: AllowDescribeAZ
+            Action:
+              - "ec2:DescribeAvailabilityZones"
+            Resource: "*"
+          - Effect: Allow
+            Sid: AllowImportFindingsToSecHub
+            Action:
+              - "securityhub:BatchImportFindings"
+            Resource: "*"
+          - Effect: Allow
+            Sid: AllowS3BucketPutObject
+            Action:
+              - "s3:PutObject"
+              - "s3:GetObject"
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${S3Bucket}/*"
+      Roles:
+        - Ref: "NAAEC2Role"
+
+  NAAEC2Role:
+    Type: "AWS::IAM::Role"
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "The IAM Role name is specified as an explicit for use within the scripting"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !FindInMap [PartitionMap, !Ref "AWS::Partition", ec2service]
+            Action:
+              - "sts:AssumeRole"
+      Description: "This role grants necessary permissions for the NAA Script EC2 instance to assume roles in accounts"
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      Path: "/"
+      RoleName: !Sub "${IAMNAAEC2Role}"
+
+  RootInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      InstanceProfileName: !Sub "${IAMNAAEC2Role}"
+      Path: "/"
+      Roles:
+        - Ref: "NAAEC2Role"
+
+  NAASNSTopic:
+    Condition: EmailProvided
+    Type: AWS::SNS::Topic
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W47
+            reason: "The SNS Topic is used to send a notification when the NAA analysis is completed and objects are uploaded to S3"
+    Properties:
+      TopicName: NAANotifications
+
+  NAASNSSubscription:
+    Condition: EmailProvided
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      Endpoint: !Ref EmailAddress
+      TopicArn: !Ref NAASNSTopic
+      
+  NAASNSTopicPolicy:
+    Condition: EmailProvided
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action:
+              - sns:Publish
+            Resource:
+              Ref: NAASNSTopic
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Sub "${AWS::AccountId}"
+      Topics:
+        - !Ref NAASNSTopic
+
+  S3EventRule:
+    Condition: EmailProvided
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: NAA S3 Bucket Event
+      Name: NAAS3BucketEvent
+      EventPattern:
+        source:
+          - aws.s3
+        detail-type:
+          - Object Created
+        detail:
+          bucket:
+            name:
+            - !Ref S3Bucket
+          object:
+            key:
+              - prefix: "naa-findings"
+      State: ENABLED
+      Targets:
+        - Arn: !Ref NAASNSTopic
+          Id: NAASNSTopic
+          InputTransformer:
+            InputPathsMap:
+              "s3bucket": "$.detail.bucket.name"
+              "s3objectkey": "$.detail.object.key"
+            InputTemplate: |
+              "NAA analysis has completed and the report has been uploaded to the S3 Bucket."
+              "S3 Bucket Name: <s3bucket>"
+              "S3 Object Key: <s3objectkey>"
+          RetryPolicy:
+            MaximumRetryAttempts: 4
+            MaximumEventAgeInSeconds: 400
+
+  SHEventRule:
+      Condition: SHEmailConfirmed
+      Type: "AWS::Events::Rule"
+      Properties:
+        Description: Network Access Analyzer Security Hub Bucket Event
+        Name: SecurityHub-NetworkAccessAnalyzer-Internet_Ingress
+        EventPattern:
+          source:
+            - aws.securityhub
+          detail-type:
+            - Security Hub Findings - Imported
+          detail:
+            findings:
+              Title:
+              - Network Access Analyzer - Ingress Data Path From Internet
+        State: ENABLED
+        Targets:
+          - Arn: !Ref NAASNSTopic
+            Id: NAASNSTopic
+            InputTransformer:
+              InputPathsMap:
+                "description": "$.detail.findings[0].Description"
+                "id": "$.detail.findings[0].Resources[0].Id"
+                "updatedat": "$.detail.findings[0].UpdatedAt"
+                "account": "$.detail.findings[0].Resources[0].Details.Other.account"
+                "region": "$.detail.findings[0].Resources[0].Details.Other.region"
+                "partition": "$.detail.findings[0].Resources[0].Details.Other.partition"
+                "vpc_id": "$.detail.findings[0].Resources[0].Details.Other.vpc_id"
+                "subnet_id": "$.detail.findings[0].Resources[0].Details.Other.subnet_id"
+                "instance_id": "$.detail.findings[0].Resources[0].Details.Other.instance_id"
+                "instance_arn": "$.detail.findings[0].Resources[0].Details.Other.instance_arn"
+                "instance_name": "$.detail.findings[0].Resources[0].Details.Other.instance_name"
+                "resource_id": "$.detail.findings[0].Resources[0].Details.Other.resource_id"
+                "resource_arn": "$.detail.findings[0].Resources[0].Details.Other.resource_arn"
+                "secgroup_id": "$.detail.findings[0].Resources[0].Details.Other.secgroup_id"
+                "sgrule_direction": "$.detail.findings[0].Resources[0].Details.Other.sgrule_direction"
+                "sgrule_cidr": "$.detail.findings[0].Resources[0].Details.Other.sgrule_cidr"
+                "sgrule_protocol": "$.detail.findings[0].Resources[0].Details.Other.sgrule_protocol"
+                "sgrule_portrange": "$.detail.findings[0].Resources[0].Details.Other.sgrule_portrange"
+              InputTemplate: |
+                "Description: <description>"
+                "Id: <id>"
+                "UpdateAt: <updatedat>"
+                "Account: <account>"
+                "Region: <region>"
+                "Partition: <partition>"
+                "VPC_ID: <vpc_id>"
+                "Instance_ID: <instance_id>"
+                "Instance_ARN: <instance_arn>"
+                "Instance_Name: <instance_name>"
+                "Resource_ID: <resource_id>"
+                "Resource_ARN: <resource_arn>"
+                "Secgroup_ID: <secgroup_id>"
+                "Secgroup_Rule_direction: <sgrule_direction>"
+                "SecGroup_Rule_CIDR: <sgrule_cidr>"
+                "SecGroup_Rule_Protocol: <sgrule_protocol>"
+                "SecGroup_Rule_PortRange: <sgrule_portrange>"
+            RetryPolicy:
+              MaximumRetryAttempts: 4
+              MaximumEventAgeInSeconds: 400
+
+  NAASG:
+    Type: "AWS::EC2::SecurityGroup"
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "The Security Group name is specified explicitly."
+          - id: W5
+            reason: "The Security Group has egress rules with cidr open to world to download packages from repos."
+    Properties:
+      GroupDescription: "Security Group which allows outbound Internet and SSM access"
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        - Description: "Download packages from Internet, SSM Connect, and write to S3"
+          IpProtocol: "tcp"
+          FromPort: "443"
+          ToPort: "443"
+          CidrIp: 0.0.0.0/0
+        - Description: "DNS resolution"
+          IpProtocol: "udp"
+          FromPort: "53"
+          ToPort: "53"
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - Description: "Inbound SSH"
+          IpProtocol: "tcp"
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: !Ref PermittedSSHInbound
+      GroupName: "naa-sg"
+      Tags:
+        - Key: "Name"
+          Value: "naa-sg"
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt NAAEC2Role.Arn
+            Action:
+              - "s3:PutObject"
+              - "s3:GetObject"
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${S3Bucket}/*"
+          - Sid: Deny non-HTTPS access
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - !Sub "arn:${AWS::Partition}:s3:::${S3Bucket}"
+              - !Sub "arn:${AWS::Partition}:s3:::${S3Bucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub "${BucketName}-${AWS::AccountId}-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+      LoggingConfiguration:
+        DestinationBucketName: !Ref S3LoggingBucket
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+        - Id: LoggingLifeCycle
+          Status: Enabled
+          ExpirationInDays: '365'
+          NoncurrentVersionExpirationInDays: '365'
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${BucketName}-${AWS::AccountId}-${AWS::Region}"
+
+  S3LoggingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3LoggingBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 's3:PutObject'
+            Effect: Allow
+            Principal:
+              Service: logging.s3.amazonaws.com
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${S3LoggingBucket}/*"
+            Condition:
+              ArnLike:
+                aws:SourceArn: !GetAtt S3Bucket.Arn
+              StringEquals:
+                aws:SourceAccount: !Sub "${AWS::AccountId}"
+          - Sid: Deny non-HTTPS access
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - !Sub "arn:${AWS::Partition}:s3:::${S3LoggingBucket}"
+              - !Sub "arn:${AWS::Partition}:s3:::${S3LoggingBucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+
+  S3LoggingBucket:
+    Type: 'AWS::S3::Bucket'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: "S3 access logging is not enable as this is the logging bucket"
+    Properties:
+      BucketName: !Sub "${BucketName}-accesslogs-${AWS::AccountId}-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+      LifecycleConfiguration:
+        Rules:
+        - Id: LoggingLifeCycle
+          Status: Enabled
+          ExpirationInDays: '180'
+          NoncurrentVersionExpirationInDays: '180'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${BucketName}-access-logs-${AWS::AccountId}-${AWS::Region}"
+
+  LaunchTemplate:
+    Type: "AWS::EC2::LaunchTemplate"
+    Properties:
+      LaunchTemplateData:
+        MetadataOptions:
+          HttpTokens: "required"
+
+  Ec2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId:
+        Ref: "InstanceImageId"
+      InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: "12"
+            DeleteOnTermination: true
+            VolumeType: "gp3"
+            Encrypted: true
+      SubnetId: !Ref SubnetId
+      IamInstanceProfile: !Ref NAAEC2Role
+      LaunchTemplate:
+        LaunchTemplateId:
+          Ref: "LaunchTemplate"
+        Version: "1"
+      KeyName:
+        Fn::If:
+          - KeyProvided
+          - Ref: KeyPairName
+          - Ref: AWS::NoValue
+      SecurityGroupIds:
+        - !GetAtt "NAASG.GroupId"
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash
+
+            #Upgrade the OS
+            sudo dnf upgrade -y
+            
+            #Sleep 5 seconds to allow dnf to release RPM lock (if exists)
+            sleep 5
+
+            #Install script dependencies
+            sudo dnf install -y jq pip git cronie cronie-anacron
+            pip install csvkit boto3
+            ln -s /usr/local/bin/csvjoin /usr/bin
+            sudo systemctl enable crond.service && systemctl start crond.service
+
+            #Clone Repo
+            cd /usr/local
+            git clone https://github.com/aws-samples/network-access-analyzer-multi-account-analysis naa
+
+            chmod +x /usr/local/naa/naa-script.sh
+
+            #Replace default script variable values in /usr/local/naa/naa-script.sh with parameters configured during CFT deploy
+            #Note: This occurs ONCE during EC2 deployment and must be manually configured after deploy if additional tuning is required
+            #       Commented variables are left unchanged in the script
+            #       Multiple individual sed commands used for readability
+
+            #SPECIFIC_ACCOUNTID_LIST="allaccounts"
+            sed -i 's/REGION_LIST="us-east-1"/REGION_LIST="${Regions}"/' /usr/local/naa/naa-script.sh
+            sed -i 's/IAM_CROSS_ACCOUNT_ROLE="NAAExecRole"/IAM_CROSS_ACCOUNT_ROLE="${IAMNAAExecRole}"/' /usr/local/naa/naa-script.sh
+            #SCRIPT_EXECUTION_MODE="CREATE_ANALYZE"
+            sed -i 's/SCOPE_NAME_VALUE="naa-external-ingress"/SCOPE_NAME_VALUE="${ScopeNameValue}"/' /usr/local/naa/naa-script.sh
+            sed -i 's/EXCLUSIONS_FILE="naa-exclusions.csv"/EXCLUSIONS_FILE="${ExclusionsFile}"/' /usr/local/naa/naa-script.sh
+            #SCOPE_FILE="naa-scope.json"
+            sed -i 's/S3_BUCKET="SetS3Bucket"/S3_BUCKET="${S3Bucket}"/' /usr/local/naa/naa-script.sh
+            sed -i 's/PARALLELISM="10"/PARALLELISM="${Parallelism}"/' /usr/local/naa/naa-script.sh
+            sed -i 's/REGION_LIST="us-east-1"/REGION_LIST="${Regions}"/' /usr/local/naa/naa-script.sh
+            #S3_EXCLUSION_FILE="true"
+            sed -i 's/FINDINGS_TO_CSV="true"/FINDINGS_TO_CSV="${FindingsToCSV}"/' /usr/local/naa/naa-script.sh
+            sed -i 's/FINDINGS_TO_SH="true"/FINDINGS_TO_SH="${FindingsToSecurityHub}"/' /usr/local/naa/naa-script.sh
+            
+            #Set cron if ScheduledAnalysis == true and use the CronScheduleExpression value
+            if [[ "${ScheduledAnalysis}" == "true" ]]; then
+              echo "${CronScheduleExpression} root BASH_ENV=/etc/profile cd /usr/local/naa && /usr/local/naa/naa-script.sh >> /usr/local/naa/naa-cron.log 2>&1" > /etc/cron.d/naa-schedule
+            fi
+            
+      Tags:
+        - Key: "Name"
+          Value: "NetworkAccessAnalyzerEC2"
+
+Outputs:
+  NAAEC2Role:
+    Description: The ARN of the NAAEC2Role
+    Value: !GetAtt NAAEC2Role.Arn

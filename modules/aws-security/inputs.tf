@@ -12,6 +12,15 @@ variable "env" {
   type = string
 }
 
+variable "region" {
+  type = string
+}
+
 variable "company_prefix" {
   type = string
+}
+
+variable "email_address" {
+  type    = string
+  default = "tarlan@huseynov.net"
 }
