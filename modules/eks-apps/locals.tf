@@ -1,7 +1,7 @@
 locals {
   eks_app_statements = [
     {
-      name = "app1"
+      name = "app1" # deployment/serviceAccountName
       statements = [
         {
           effect    = "Allow"
@@ -29,9 +29,9 @@ locals {
 
   eks_app_buckets = [
     {
-      name                     = "sandbox-test-bucket-123123"
-      acl                      = null                  # ["private" "public-read" "public-read-write" "authenticated-read" "aws-exec-read" "log-delivery-write"]
-      object_ownership         = "BucketOwnerEnforced" # acl not supported
+      name                     = "sandbox-test-bucket-123123" # bucketName
+      acl                      = null                         # ["private" "public-read" "public-read-write" "authenticated-read" "aws-exec-read" "log-delivery-write"]
+      object_ownership         = "BucketOwnerEnforced"        # acl not supported
       policy                   = null
       control_object_ownership = false
       force_destroy            = true
