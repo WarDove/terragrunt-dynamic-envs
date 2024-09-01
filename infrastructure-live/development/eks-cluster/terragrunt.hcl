@@ -6,8 +6,8 @@ dependency "eks-vpc" {
   config_path                             = "../eks-vpc"
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
   mock_outputs = {
-    vpc_id          = "fake-vpc-id"
-    private_subnets = ["fake-subnet-id1", "fake-subnet-id2"]
+    vpc_id     = "fake-vpc-id"
+    subnet_ids = ["fake-subnet-id1", "fake-subnet-id2"]
   }
 }
 
