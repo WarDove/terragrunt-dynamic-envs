@@ -13,3 +13,7 @@ variable "dynamic" {
 variable "env" {
   type = string
 }
+
+variable "company_prefix" {
+  type = string
+}
