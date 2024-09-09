@@ -1,3 +1,5 @@
+// Additional binary dependencies: git, sops
+
 skip                          = true
 terragrunt_version_constraint = ">= 0.66"
 terraform_version_constraint  = ">= 1.9.0"
@@ -73,11 +75,12 @@ generate "provider" {
 
       default_tags {
         tags = {
-          Environment = "${local.env}"
-          ManagedBy   = "terraform"
-          DeployedBy  = "terragrunt"
-          Creator     = "${get_env("USER", "NOT_SET")}"
-          Company     = "${local.company_prefix}"
+          Environment   = "${local.env}"
+          ManagedBy     = "terraform"
+          DeployedBy    = "terragrunt"
+          Creator       = "${get_env("USER", "NOT_SET")}"
+          CreatorEmail = run_cmd("git", "config", "--get", "user.email")
+          Company       = "${local.company_prefix}"
         }
       }
     }
@@ -94,11 +97,12 @@ generate "provider" {
 
       default_tags {
         tags = {
-          Environment = "${local.env}"
-          ManagedBy   = "terraform"
-          DeployedBy  = "terragrunt"
-          Creator     = "${get_env("USER", "NOT_SET")}"
-          Company     = "${local.company_prefix}"
+          Environment   = "${local.env}"
+          ManagedBy     = "terraform"
+          DeployedBy    = "terragrunt"
+          Creator       = "${get_env("USER", "NOT_SET")}"
+          CreatorEmail = run_cmd("git", "config", "--get", "user.email")
+          Company       = "${local.company_prefix}"
         }
       }
     }
