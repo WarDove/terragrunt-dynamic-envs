@@ -32,3 +32,8 @@ resource "aws_iam_role" "gha_role" {
   assume_role_policy = data.aws_iam_policy_document.gha_oidc_assume_role_policy.json
   name               = "GitHubActionsRole"
 }
+
+resource "aws_iam_role_policy_attachment" "gha_policy_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  role       = aws_iam_role.gha_role.name
+}
