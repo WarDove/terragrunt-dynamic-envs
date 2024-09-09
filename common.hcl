@@ -21,7 +21,7 @@ inputs = {
     "app3"
   ]
 
-  company_prefix       = "wardove"
+  company_prefix       = "mycompany"
   sdlc_account_ids     = local.sdlc_account_ids
   core_account_ids     = local.core_account_ids
   security_account_ids = local.security_account_ids
