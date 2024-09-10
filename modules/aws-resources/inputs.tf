@@ -17,3 +17,8 @@ variable "env" {
 variable "company_prefix" {
   type = string
 }
+
+variable "gha_oidc_enabled" {
+  type    = bool
+  default = false
+}
