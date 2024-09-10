@@ -5,11 +5,12 @@ terraform {
 }
 
 locals {
-  common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
-  env         = "root"
-  env_regex   = "infrastructure-live/([a-zA-Z0-9-]+)/"
-  profile     = "${local.common_vars.inputs.company_prefix}-root-sso"
-  region      = "eu-central-1"
+  common_vars   = read_terragrunt_config(find_in_parent_folders("common.hcl"))
+  creator_email = run_cmd("git", "config", "--get", "user.email")
+  env           = "root"
+  env_regex     = "infrastructure-live/([a-zA-Z0-9-]+)/"
+  profile       = "${local.common_vars.inputs.company_prefix}-root-sso"
+  region        = "eu-central-1"
 }
 
 inputs = merge(
@@ -62,11 +63,12 @@ generate "provider" {
 
       default_tags {
         tags = {
-          Environment = "${local.env}"
-          ManagedBy   = "terraform"
-          DeployedBy  = "terragrunt"
-          Creator     = "${get_env("USER", "NOT_SET")}"
-          Company     = "${local.common_vars.inputs.company_prefix}"
+          Environment  = "${local.env}"
+          ManagedBy    = "terraform"
+          DeployedBy   = "terragrunt"
+          Creator      = "${get_env("USER", "NOT_SET")}"
+          CreatorEmail = "${local.creator_email}"
+          Company      = "${local.common_vars.inputs.company_prefix}"
         }
       }
     }

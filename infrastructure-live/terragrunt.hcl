@@ -21,6 +21,7 @@ locals {
   secret_vars        = yamldecode(sops_decrypt_file(find_in_parent_folders("secrets.yaml")))
   company_prefix     = local.common_vars.inputs.company_prefix
   env                = try(regex(local.env_regex, get_original_terragrunt_dir())[0], "shared-services")
+  creator_email      = run_cmd("git", "config", "--get", "user.email")
   env_regex          = "infrastructure-live/([a-zA-Z0-9-]+)/"
   az_count           = local.env == "production" ? 3 : 2
   cluster_name       = "${local.company_prefix}-${local.env}"
@@ -79,7 +80,7 @@ generate "provider" {
           ManagedBy     = "terraform"
           DeployedBy    = "terragrunt"
           Creator       = "${get_env("USER", "NOT_SET")}"
-          CreatorEmail = run_cmd("git", "config", "--get", "user.email")
+          CreatorEmail  = "${local.creator_email}"
           Company       = "${local.company_prefix}"
         }
       }
@@ -101,7 +102,7 @@ generate "provider" {
           ManagedBy     = "terraform"
           DeployedBy    = "terragrunt"
           Creator       = "${get_env("USER", "NOT_SET")}"
-          CreatorEmail = run_cmd("git", "config", "--get", "user.email")
+          CreatorEmail  = "${local.creator_email}"
           Company       = "${local.company_prefix}"
         }
       }
