@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "gha_oidc_assume_role_policy" {
     condition {
       test     = "StringLike"
       variable = "${replace(module.iam_github_oidc_provider.url, "https://", "")}:sub"
-      values   = ["repo:${var.company_prefix}/*", "repo:wardove/*"]
+      values   = ["repo:${var.company_prefix}/*", "repo:WarDove/*"]
     }
 
     condition {

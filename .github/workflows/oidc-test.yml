@@ -1,3 +1,4 @@
+run-name: TEST OIDC
 name: Connect to an AWS role from a GitHub repository
 on:
   push:
@@ -18,7 +19,7 @@ jobs:
       - name: Git clone the repository
         uses: actions/checkout@v4
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::011528295573:role/GitHubActionsRole
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
