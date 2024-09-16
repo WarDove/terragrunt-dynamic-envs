@@ -25,8 +25,8 @@ locals {
   env_regex          = "infrastructure-live/([a-zA-Z0-9-]+)/"
   az_count           = local.env == "production" ? 3 : 2
   cluster_name       = "${local.company_prefix}-${local.env}"
-  profile            = "${local.company_prefix}-shared-services-tf"
-  kubeconfig_profile = "${local.company_prefix}-${local.env}-tf"
+  profile            = get_env("AWS_PROFILE", "${local.company_prefix}-shared-services-tf")
+  kubeconfig_profile = get_env("AWS_PROFILE_KUBECONFIG", "${local.company_prefix}-${local.env}-tf")
   region             = "us-east-2"
   runtime_env        = get_env("RUNTIME_ENV", "local")
 }
@@ -44,6 +44,7 @@ inputs = merge(
     az_count           = local.az_count
   }
 )
+# profile = get_env("AWS_PROFILE", "${local.company_prefix}-shared-services-tf")
 
 remote_state {
   backend = "s3"

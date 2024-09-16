@@ -9,7 +9,7 @@ locals {
   creator_email = run_cmd("git", "config", "--get", "user.email")
   env           = "root"
   env_regex     = "infrastructure-live/([a-zA-Z0-9-]+)/"
-  profile       = "${local.common_vars.inputs.company_prefix}-root-sso"
+  profile       = get_env("AWS_PROFILE", "${local.common_vars.inputs.company_prefix}-root-sso")
   region        = "eu-central-1"
 }
 
