@@ -33,6 +33,7 @@ inputs = {
   cluster_certificate_authority_data = dependency.eks-cluster.outputs.cluster_certificate_authority_data
 }
 
+# Note generate section can be put into a provider.hcl file and then included using find_in_parent_folders("provider.hcl")
 generate "provider_kubernetes" {
   path      = "provider-kubernetes.tf"
   if_exists = "overwrite"
